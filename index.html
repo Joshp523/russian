@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Глаголы</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600&family=Roboto+Condensed:wght@400;700&display=swap">
+<meta name="theme-color" content="#b30f27"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-180.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Глаголы">
+<style>
+*{box-sizing:border-box}html,body{margin:0}body{font:17px/1.4 "Roboto Condensed",sans-serif;color:#1b1c1d;background:linear-gradient(135deg,#9a9b98,#85867f 55%,#92938f) fixed;min-height:100vh}
+main{max-width:520px;margin:0 auto;padding:0 0 110px}.o,h1,h3,.btn,nav button{font-family:Oswald,sans-serif;text-transform:uppercase;letter-spacing:.12em}
+.b{background:#b30f27;color:#f3efe6;padding:calc(12px + env(safe-area-inset-top,0px)) 16px 12px;display:flex;justify-content:space-between;font-size:14px;border-bottom:4px solid #1b1c1d}
+.k{background:#2b2c2e;color:#eeebe3;border:3px solid #1b1c1d;box-shadow:6px 6px 0 #1b1c1d;padding:14px;margin:16px}.k h3{margin:0 0 8px;font-size:15px;color:#ff8d9b;font-weight:500}.m{color:#c4c3bc;font-size:14px}
+.btn{display:block;width:100%;min-height:48px;border:3px solid #1b1c1d;background:#b30f27;color:#fff;font-size:16px;margin-top:12px;box-shadow:4px 4px 0 #1b1c1d}.btn.g{background:#3a4a3f}
+.big{font:600 44px Oswald,sans-serif;color:#fff}.t{height:12px;background:#4a4b4d;margin:4px 0 12px}.t i{display:block;height:100%;background:#d8213a}
+.ru{font-size:22px;line-height:1.35}input{display:block;width:100%;min-height:54px;margin-top:10px;border:3px solid #1b1c1d;background:#e8e4da;font:24px "Roboto Condensed",sans-serif;padding:8px 12px;color:#1b1c1d}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:#1b1c1d;border-top:4px solid #b30f27}nav button{flex:1;background:none;border:0;color:#c4c3bc;font-size:12px;padding:14px 0 calc(22px + env(safe-area-inset-bottom,0px))}nav .on{background:#b30f27;color:#fff}
+.ok{color:#6fd68c}.bad{color:#ff8d9b}table{width:100%;border-collapse:collapse;font-size:16px}td{padding:5px 4px;border-top:1px solid #4a4b4d}
+</style></head><body><main id="app"></main><nav id="nav"></nav>
+<script>
+const IV=[0,1,3,7,16,35],NEWMAX=7,K='rus1';
+const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+const today=iso(new Date()),addD=n=>{const d=new Date();d.setDate(d.getDate()+n);return iso(d)};
+const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const norm=s=>s.replace(/\u0301/g,'').toLowerCase().replace(/ё/g,'е').trim();
+/* id, tag, sentence, hint, answer (stressed), rule */
+const L=[
+['m1','идти','Сейчас я ___ в магазин.','идти / ходить','иду́','Один конкретный путь, прямо сейчас → идти́: я иду́, ты идёшь, они иду́т.'],
+['m2','идти','Я каждый день ___ в университет пешком.','идти / ходить','хожу́','Привычка, повторение → ходи́ть: я хожу́, ты хо́дишь.'],
+['m3','идти','Вчера мы ___ в кино. (пошли и вернулись)','идти / ходить','хо́дили','Туда и обратно в прошлом → ходи́ть (хо́дили).'],
+['m4','идти','Куда ты ___?','идти / ходить','идёшь','Вопрос «куда?» прямо сейчас → идти́: идёшь.'],
+['m5','идти','Когда я ___ домой, я встретил друга. (я = он)','идти / ходить','шёл','Прошедшее от идти́ нерегулярное: шёл, шла, шло, шли.'],
+['m6','идти','Когда она ___ домой, пошёл дождь.','идти / ходить','шла','Прошедшее от идти́: шёл, шла, шло, шли.'],
+['m7','ехать','Мы сейчас ___ на поезде в Брюгге.','ехать / ездить','е́дем','Один путь, сейчас → е́хать: е́ду, е́дешь, е́дем.'],
+['m8','ехать','Он часто ___ в Москву по делам.','ехать / ездить','е́здит','Регулярно → е́здить: е́зжу, е́здишь, е́здит.'],
+['m9','вести','Она каждое утро ___ ребёнка в школу.','вести / водить','во́дит','Регулярно → води́ть: вожу́, во́дишь. (Один путь: вести́ — веду́, ведёшь.)'],
+['m10','нести','Я сейчас ___ сумку домой.','нести / носить','несу́','Один путь, сейчас → нести́: несу́, несёшь.'],
+['m11','нести','Он всегда ___ с собой словарь.','нести / носить','но́сит','Всегда, обычно → носи́ть: ношу́, но́сишь.'],
+['m12','лететь','Смотри, самолёт ___ над городом!','лететь / летать','лети́т','Один полёт, сейчас → лете́ть: лечу́, лети́шь, лети́т.'],
+['m13','лететь','Я боюсь ___ на самолёте.','лететь / летать','лета́ть','Общий факт, без одного маршрута → лета́ть.'],
+['m14','бежать','Смотри, мальчик ___ по улице!','бежать / бегать','бежи́т','Один путь, сейчас → бежа́ть: бегу́, бежи́шь, бежи́т.'],
+['m15','бежать','Я люблю ___ утром в парке.','бежать / бегать','бе́гать','Любить + процесс вообще → бе́гать.'],
+['m16','плыть','Смотри, кто-то ___ по реке.','плыть / плавать','плывёт','Один путь, сейчас → плыть: плыву́, плывёшь, плывёт.'],
+['m17','плыть','Он хорошо ___.','плыть / плавать','пла́вает','Умение, способность → пла́вать.'],
+['p1','приставки','Вчера он ___ из дома в восемь утра.','выйти / выходить','вы́шел','Один раз, результат → совершенный вид: вы́йти (вы́йду, вы́шел) + из + род. п.'],
+['p2','приставки','Он обычно ___ из дома в восемь.','выйти / выходить','выхо́дит','Обычно → несовершенный вид: выходи́ть (выхожу́, выхо́дишь).'],
+['p3','приставки','Завтра я ___ к тебе в гости.','прийти / приходить','приду́','Один раз в будущем → прийти́: приду́, придёшь, придёт. к + дат. п.'],
+['p4','приставки','Каждый день она ___ домой в шесть.','прийти / приходить','прихо́дит','Каждый день → приходи́ть: прихожу́, прихо́дишь.']];
+let S={cards:{},tg:{},log:[],days:{}};
+try{S={...S,...JSON.parse(localStorage.getItem(K))}}catch(e){}
+let tab='home',Q=[],TOT=0,tries=0,fb=null,msg='';
+const persist=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
+let pt;const save=()=>{persist();if(AU){clearTimeout(pt);pt=setTimeout(sync,4000)}};
+const streak=()=>{let n=0,i=S.days[today]?0:1;while(S.days[addD(-i)]){n++;i++}return n};
+function queue(){const due=L.filter(c=>S.cards[c[0]]&&S.cards[c[0]].due<=today),fresh=L.filter(c=>!S.cards[c[0]]),used=Object.values(S.cards).filter(c=>c.f===today).length;
+ return due.concat(fresh.slice(0,Math.max(0,NEWMAX-used))).map(c=>c[0])}
+function start(){Q=queue();TOT=Q.length;tries=0;fb=null;msg='';tab='drill';render()}
+function check(){const v=document.getElementById('a').value;if(!v.trim())return;const c=L.find(x=>x[0]===Q[0]);
+ if(norm(v)===norm(c[4])){grade(c,tries?1:2,v)}
+ else if(!tries){tries=1;msg='Не совсем. Попробуйте ещё раз.';render();document.getElementById('a').focus()}
+ else{S.log.push({t:Date.now(),id:c[0],a:v});S.log=S.log.slice(-200);grade(c,0,v)}}
+function grade(c,g,v){const id=c[0],s=S.cards[id]||{b:0,f:today};
+ if(!tries){const t=S.tg[c[1]]||[0,0];t[1]++;if(g===2)t[0]++;S.tg[c[1]]=t}
+ s.b=g===2?Math.min(5,s.b+1):g===1?Math.max(1,s.b):0;s.due=addD(IV[s.b]);s.t=Date.now();S.cards[id]=s;S.days[today]=(S.days[today]||0)+1;
+ if(g===0)Q.push(id);fb={g};msg='';save();render()}
+function next(){Q.shift();tries=0;fb=null;msg='';render()}
+const st=a=>a.replace(/([аеёиоуыэюя])\u0301/g,'<b style="color:#ff8d9b">$1\u0301</b>');
+function home(){const q=queue(),due=q.filter(i=>S.cards[i]).length,tg=Object.entries(S.tg).map(([k,v])=>[k,v[0]/v[1]]).sort((a,b)=>a[1]-b[1]).slice(0,3);
+ return`<div class="b o"><span>★ Глаголы</span><span>Серия ${streak()}</span></div><div class="k"><h3>Норма сегодня</h3><div style="display:flex;gap:28px"><div><div class="big">${due}</div><div class="m">повторений</div></div><div><div class="big">${q.length-due}</div><div class="m">новых</div></div></div><button class="btn" onclick="start()">${q.length?'Начать смену ★':'Норма выполнена'}</button></div>
+ <div class="k"><h3>Слабые места</h3>${tg.length?tg.map(([k,v])=>`<div class="m">${k} ${Math.round(v*100)}%</div><div class="t"><i style="width:${v*100}%"></i></div>`).join(''):'<div class="m">Данные появятся после первой смены.</div>'}</div>`}
+function drill(){if(!Q.length)return`<div class="b o"><span>★ Смена окончена</span></div><div class="k"><h3>Готово</h3><div class="m">Сделано ${TOT} карточек. Возвращайтесь завтра.</div><button class="btn" onclick="tab='home';render()">На главную</button></div>`;
+ const c=L.find(x=>x[0]===Q[0]),n=TOT-Q.length+1;
+ const body=fb?`<div class="k"><h3 class="${fb.g?'ok':'bad'}">${fb.g===2?'Верно':fb.g===1?'Верно со второго раза':'Неверно'}</h3><div class="ru">${st(c[2].replace('___',c[4]))}</div><div style="margin-top:8px">${esc(c[5])}</div><button class="btn" onclick="next()">Дальше</button></div>`
+ :`<div class="k"><h3>${esc(c[3])}</h3><div class="ru">${esc(c[2])}</div><input id="a" autocapitalize="off" autocorrect="off" spellcheck="false" lang="ru" autocomplete="off" aria-label="Ответ" onkeydown="if(event.key==='Enter')check()"><div class="bad" style="margin-top:6px">${msg}</div><div class="m">Ударение не нужно · е = ё</div><button class="btn" onclick="check()">Проверить</button></div>`;
+ return`<div class="b o"><span>★ Упражнение</span><span>${n}/${TOT+(Q.length+n-1-TOT)}</span></div>${body}`}
+function rules(){const T=[['идти́ / ходи́ть','пешком'],['е́хать / е́здить','транспорт'],['нести́ / носи́ть','нести'],['вести́ / води́ть','вести'],['лете́ть / лета́ть','лететь'],['бежа́ть / бе́гать','бежать'],['плыть / пла́вать','плыть']];
+ return`<div class="b o"><span>★ Правила</span><span>Урок 1</span></div><div class="k"><h3>Один путь / повторение</h3><div>Первый глагол: одно направление, прямо сейчас. Второй: привычка, туда и обратно, общая способность.</div><table>${T.map(r=>`<tr><td>${st(r[0])}</td><td class="m">${r[1]}</td></tr>`).join('')}</table></div>
+ <div class="k"><h3>Приставка → вид</h3><div>Приставка + первый глагол = совершенный (вы́йти, прийти́). Приставка + второй = несовершенный (выходи́ть, приходи́ть). Куда? в/на/к + вин./дат. Откуда? из/с/от + род.</div></div>
+ <div class="k" style="border-color:#b30f27"><h3>Из книги</h3><div class="ru" style="font-size:18px">«…оди́н молодо́й челове́к вы́шел из свое́й камо́рки… на у́лицу и ме́дленно, как бы в нереши́мости, отпра́вился к К—ну мо́сту.»</div><div class="m" style="margin-top:6px">Ф. М. Достоевский, «Преступление и наказание», 1866</div></div>`}
+function stats(){const bx=[0,1,2,3,4,5].map(i=>Object.values(S.cards).filter(c=>c.b===i).length),mx=Math.max(1,...bx);
+ return`<div class="b o"><span>★ Итоги</span><span>Серия ${streak()}</span></div><div class="k"><h3>Коробки (0 · 1д · 3д · 7д · 16д · 35д)</h3><div style="display:flex;gap:6px;align-items:flex-end;height:90px">${bx.map(v=>`<div style="flex:1;background:#b30f27;height:${v/mx*90+3}px" title="${v}"></div>`).join('')}</div><div class="m" style="display:flex;justify-content:space-around;margin-top:4px">${bx.map(v=>`<span>${v}</span>`).join('')}</div></div>
+ <div class="k"><h3>Ошибки (последние)</h3>${S.log.slice(-5).reverse().map(x=>{const c=L.find(y=>y[0]===x.id);return c?`<div class="m">${esc(x.a)} → <span class="ok">${st(c[4])}</span> · ${esc(c[3])}</div>`:''}).join('')||'<div class="m">Пока пусто.</div>'}</div>${cloud()}`}
+/* Supabase (shares login with Daily Discipline; own table rus_snapshots, own storage keys) */
+const SB='https://hrhlgscfgqjqslejlpqa.supabase.co',KEY='sb_publishable_GeOYErBznt6Y60TeU9oJcA_hK_Ugwyy';
+let AU=null,SYT='Не в сети';try{AU=JSON.parse(localStorage.getItem('rus_auth'));if(AU)SYT='…'}catch(e){}
+const saveAU=()=>{try{AU?localStorage.setItem('rus_auth',JSON.stringify(AU)):localStorage.removeItem('rus_auth')}catch(e){}};
+async function auth(b,g){const r=await fetch(SB+'/auth/v1/token?grant_type='+g,{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify(b)}),j=await r.json();if(!r.ok)throw new Error(j.error_description||j.msg||'Ошибка входа');AU={at:j.access_token,rt:j.refresh_token,exp:Date.now()+j.expires_in*1000,uid:j.user.id,em:j.user.email};saveAU()}
+async function sb(p,o={}){if(AU.exp-30000<Date.now())await auth({refresh_token:AU.rt},'refresh_token');const r=await fetch(SB+'/rest/v1/'+p,{...o,headers:{apikey:KEY,Authorization:'Bearer '+AU.at,'Content-Type':'application/json',...(o.headers||{})}});const t=await r.text();if(!r.ok)throw new Error('HTTP '+r.status+' '+t.slice(0,120));return t?JSON.parse(t):[]}
+function merge(o){for(const[i,c]of Object.entries(o.cards||{})){const m=S.cards[i];if(!m||(c.t||0)>(m.t||0))S.cards[i]=c}
+ for(const[k,v]of Object.entries(o.tg||{})){const m=S.tg[k]||[0,0];S.tg[k]=[Math.max(m[0],v[0]),Math.max(m[1],v[1])]}
+ for(const[k,v]of Object.entries(o.days||{}))S.days[k]=Math.max(S.days[k]||0,v);
+ const seen=new Set(S.log.map(x=>x.t));(o.log||[]).forEach(x=>{if(!seen.has(x.t))S.log.push(x)});S.log=S.log.sort((a,b)=>a.t-b.t).slice(-200)}
+async function sync(){if(!AU)return;try{const r=await sb('rus_snapshots?select=data');if(r[0])merge(r[0].data);persist();
+ await sb('rus_snapshots?on_conflict=user_id',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({user_id:AU.uid,data:{cards:S.cards,tg:S.tg,log:S.log,days:S.days},updated_at:new Date().toISOString()})});SYT='Синхронизировано '+new Date().toTimeString().slice(0,5);if(tab!=='drill')render()}catch(e){SYT='Ошибка: '+e.message.slice(0,140);if(tab==='stats')render()}}
+async function signIn(){try{await auth({email:document.getElementById('em').value.trim(),password:document.getElementById('pw').value},'password');await sync();render()}catch(e){SYT=e.message;render()}}
+const signOut=()=>{AU=null;saveAU();SYT='Не в сети';render()};
+const cloud=()=>AU?`<div class="k"><h3>Облако</h3><div class="m">${esc(AU.em)}</div><div class="m">${esc(SYT)}</div><button class="btn" onclick="sync()">Синхронизировать</button><button class="btn g" onclick="signOut()">Выйти</button></div>`:`<div class="k"><h3>Облако</h3><div class="m">Тот же email и пароль, что в Daily Discipline.</div><input id="em" type="email" autocomplete="username" placeholder="Email"><input id="pw" type="password" autocomplete="current-password" placeholder="Пароль"><button class="btn" onclick="signIn()">Войти</button><div class="m" style="margin-top:6px">${esc(SYT)}</div></div>`;
+const TABS={home:['Смена',home],drill:['Упражнение',drill],rules:['Правила',rules],stats:['Итоги',stats]};
+function render(){document.getElementById('app').innerHTML=TABS[tab][1]();document.getElementById('nav').innerHTML=Object.entries(TABS).map(([k,v])=>`<button class="${tab===k?'on':''}" onclick="tab='${k}';${k==='drill'?'if(!Q.length)start();else ':''}render();scrollTo(0,0)">${v[0]}</button>`).join('');const a=document.getElementById('a');if(a&&!tries&&!fb)a.focus()}
+render();if(AU)sync();document.addEventListener('visibilitychange',()=>{if(AU&&!document.hidden)sync()});
+try{if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js')}catch(e){}
+</script></body></html>
