@@ -3,23 +3,27 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600&family=Roboto+Condensed:wght@400;700&display=swap">
 <meta name="theme-color" content="#b30f27"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-180.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Глаголы">
 <style>
-*{box-sizing:border-box}html,body{margin:0}body{font:17px/1.4 "Roboto Condensed",sans-serif;color:#1b1c1d;background:linear-gradient(135deg,#9a9b98,#85867f 55%,#92938f) fixed;min-height:100vh}
+*{box-sizing:border-box}html,body{margin:0}html{background:#b1aeaa}
+body{font:17px/1.4 "Roboto Condensed",sans-serif;color:#1b1c1d;background:transparent;min-height:100vh}
+/* concrete photo pinned behind the page; the html colour matches it so iPhone's bottom strip blends in */
+body::before{content:"";position:fixed;inset:0;z-index:-1;background:url(concrete.jpg) center/cover no-repeat #b1aeaa;pointer-events:none}
+@media (display-mode: standalone){html{min-height:calc(100% + env(safe-area-inset-top,0px))}}
 main{max-width:520px;margin:0 auto;padding:0 0 110px}.o,h1,h3,.btn,nav button,.chip{font-family:Oswald,sans-serif;text-transform:uppercase;letter-spacing:.12em}
 .b{background:#b30f27;color:#f3efe6;padding:calc(12px + env(safe-area-inset-top,0px)) 16px 12px;display:flex;justify-content:space-between;font-size:14px;border-bottom:4px solid #1b1c1d}
-.k{background:#2b2c2e;color:#eeebe3;border:3px solid #1b1c1d;box-shadow:6px 6px 0 #1b1c1d;padding:14px;margin:16px}.k h3{margin:0 0 8px;font-size:15px;color:#ff8d9b;font-weight:500}.m{color:#c4c3bc;font-size:14px}
+.k{background:#2b2c2e;color:#eeebe3;border:3px solid #1b1c1d;box-shadow:6px 6px 0 #1b1c1d;padding:14px;margin:16px}.k h3{margin:0 0 8px;font-size:15px;color:#e6b94f;font-weight:500}.m{color:#c4c3bc;font-size:14px}
 .btn{display:block;width:100%;min-height:48px;border:3px solid #1b1c1d;background:#b30f27;color:#fff;font-size:16px;margin-top:12px;box-shadow:4px 4px 0 #1b1c1d}.btn.g{background:#3a4a3f}
 .lnk{background:none;border:0;color:#c4c3bc;text-decoration:underline;font:14px "Roboto Condensed",sans-serif;margin-top:10px;padding:6px 0}
 .big{font:600 44px Oswald,sans-serif;color:#fff}.t{height:12px;background:#4a4b4d;margin:4px 0 12px}.t i{display:block;height:100%;background:#d8213a}
 .ru{font-size:22px;line-height:1.35}input{display:block;width:100%;min-height:54px;margin-top:10px;border:3px solid #1b1c1d;background:#e8e4da;font:24px "Roboto Condensed",sans-serif;padding:8px 12px;color:#1b1c1d}
 nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:#1b1c1d;border-top:4px solid #b30f27}nav button{flex:1;background:none;border:0;color:#c4c3bc;font-size:11px;letter-spacing:.06em;padding:14px 0 calc(22px + env(safe-area-inset-bottom,0px))}nav .on{background:#b30f27;color:#fff}
-.ok{color:#6fd68c}.bad{color:#ff8d9b}table{width:100%;border-collapse:collapse;font-size:16px}td{padding:5px 4px;border-top:1px solid #4a4b4d;vertical-align:top}
+.ok{color:#6fd68c}.bad{color:#e6b94f}table{width:100%;border-collapse:collapse;font-size:16px}td{padding:5px 4px;border-top:1px solid #4a4b4d;vertical-align:top}
 .src{color:#c4c3bc;font-size:14px;margin-top:4px}.q{border-left:4px solid #b30f27;padding:2px 0 2px 10px;margin:10px 0}.q .ru{font-size:18px}
-u{text-decoration:none;border-bottom:2px solid #ff8d9b}.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.chip{border:2px solid #1b1c1d;background:#4a4b4d;color:#eeebe3;padding:8px 10px;font-size:12px}.chip.on{background:#b30f27;color:#fff}
+u{text-decoration:none;border-bottom:2px solid #e6b94f}.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.chip{border:2px solid #1b1c1d;background:#4a4b4d;color:#eeebe3;padding:8px 10px;font-size:12px}.chip.on{background:#b30f27;color:#fff}
 details{border-top:1px solid #4a4b4d;padding:6px 0}summary{cursor:pointer;font-size:18px;list-style:none}summary::-webkit-details-marker{display:none}.gl{color:#c4c3bc;font-size:14px}
 span.w{cursor:pointer;border-radius:2px}span.w:active,span.w.sel{background:#b30f27;color:#fff}
 #sheet{position:fixed;left:0;right:0;bottom:calc(64px + env(safe-area-inset-bottom,0px));z-index:5;display:none}#sheet .k{max-width:488px;margin:0 auto 8px;border-color:#b30f27;max-height:50vh;overflow:auto}
 .x{float:right;background:none;border:0;color:#c4c3bc;font-size:22px;line-height:1;padding:0 4px}
-h4{font:500 13px Oswald,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#ff8d9b;margin:14px 0 4px}
+h4{font:500 13px Oswald,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#e6b94f;margin:14px 0 4px}
 </style></head><body><main id="app"></main><div id="sheet"></div><nav id="nav"></nav>
 <script src="data.js"></script>
 <script>
@@ -89,7 +93,7 @@ function grade(c,g,v){const id=c.id,s=S.cards[id]||{b:0,f:today};
  if(g===0)Q.push(id);fb={g};msg='';save();render()}
 function next(){Q.shift();tries=0;fb=null;msg='';render()}
 function suspend(){S.sus[Q[0]]=Date.now();Q=Q.filter(i=>i!==Q[0]);tries=0;fb=null;msg='';save();render()}
-const st=a=>a.replace(/([аеёиоуыэюяАЕЁИОУЫЭЮЯ])́/g,'<b style="color:#ff8d9b">$1́</b>');
+const st=a=>a.replace(/([аеёиоуыэюяАЕЁИОУЫЭЮЯ])́/g,'<b style="color:#e6b94f">$1́</b>');
 const hl=(s,w)=>{const e=esc(s),i=e.indexOf(w);return i<0?e:e.slice(0,i)+'<u>'+e.slice(i,i+w.length)+'</u>'+e.slice(i+w.length)};
 const tw=h=>h.replace(/[А-Яа-яЁё\u0301]+(?:-[А-Яа-яЁё\u0301]+)*/g,m=>`<span class="w">${m}</span>`);
 const quote=q=>`<div class="q"><div class="ru">«${tw(hl(q[0],q[2]))}»</div><div class="src">${esc(src(q[1]))}</div></div>`;
@@ -105,7 +109,7 @@ function drill(){if(!Q.length)return`<div class="b o"><span>★ Смена ок�
  const c=card(Q[0]);
  const full=tw(esc(c.sent)).replace('___','<u><span class="w">'+st(c.ans)+'</span></u>');
  const body=fb?`<div class="k"><h3 class="${fb.g?'ok':'bad'}">${fb.g===2?'Верно':fb.g===1?'Верно со второго раза':'Неверно'}</h3><div class="ru">${full}</div>${c.src!=null?`<div class="src">— ${esc(src(c.src))}</div>`:''}<div style="margin-top:10px">${st(esc(c.rule))}</div>${c.gloss?`<div class="gl" style="margin-top:6px">OpenRussian: “${esc(c.gloss)}”</div>`:''}<button class="btn" onclick="next()">Дальше</button>${c.src!=null?'<button class="lnk" onclick="suspend()">Убрать эту карточку</button>':''}</div>`
- :`<div class="k"><h3>${esc(c.hint)}</h3><div class="ru">${tw(esc(c.sent)).replace('___','<b style="color:#ff8d9b">___</b>')}</div>${c.src!=null?`<div class="src">— ${esc(src(c.src))}</div>`:''}<input id="a" autocapitalize="off" autocorrect="off" spellcheck="false" lang="ru" autocomplete="off" aria-label="Ответ" onkeydown="if(event.key==='Enter')check()"><div class="bad" style="margin-top:6px">${esc(msg)}</div><div class="m">Ударение не нужно · е = ё · нажмите на слово — перевод</div><button class="btn" onclick="check()">Проверить</button></div>`;
+ :`<div class="k"><h3>${esc(c.hint)}</h3><div class="ru">${tw(esc(c.sent)).replace('___','<b style="color:#e6b94f">___</b>')}</div>${c.src!=null?`<div class="src">— ${esc(src(c.src))}</div>`:''}<input id="a" autocapitalize="off" autocorrect="off" spellcheck="false" lang="ru" autocomplete="off" aria-label="Ответ" onkeydown="if(event.key==='Enter')check()"><div class="bad" style="margin-top:6px">${esc(msg)}</div><div class="m">Ударение не нужно · е = ё · нажмите на слово — перевод</div><button class="btn" onclick="check()">Проверить</button></div>`;
  return`<div class="b o"><span>★ Упражнение</span><span>Осталось ${Q.length}</span></div>${body}`}
 function rules(){return`<div class="b o"><span>★ Правила</span><span>${R.length} тем</span></div>`+R.map(r=>`<div class="k"><h3>${esc(r.h)}</h3>${(r.p||[]).map(p=>`<div style="margin-bottom:6px">${st(esc(p))}</div>`).join('')}
  ${r.pairs?`<table>${B.map(b=>`<tr><td>${st(ac(V[b[0]][6][0]))} / ${st(ac(V[b[1]][6][0]))}</td><td class="m">${esc(b[2])}<br>“${esc(V[b[0]][4])}”</td></tr>`).join('')}</table>`:''}
@@ -113,8 +117,8 @@ function rules(){return`<div class="b o"><span>★ Правила</span><span>${
  ${(r.ex||[]).map(quote).join('')}</div>`).join('')
  +`<div class="k" style="border-color:#b30f27"><h3>Из книги</h3>${quote(FIRST)}</div>`
  +`<div class="k"><h3>Источники и лицензии</h3><div class="m" style="margin-bottom:8px">Все примеры — дословные цитаты (изменены только тире). Ударения и английские значения — из словаря OpenRussian. Объяснения правил — краткие, от составителя.</div>
- <div class="m">• Формы глаголов, ударения, видовые пары, переводы: <a style="color:#ff8d9b" href="https://github.com/Badestrand/russian-dictionary">OpenRussian dictionary data</a> (openrussian.org), CC BY-SA 4.0.</div>
- <div class="m">• Тексты: <a style="color:#ff8d9b" href="https://github.com/nevmenandr/word2vec-russian-novels">nevmenandr/word2vec-russian-novels</a> (Б. Орехов); произведения в общественном достоянии:</div>
+ <div class="m">• Формы глаголов, ударения, видовые пары, переводы: <a style="color:#e6b94f" href="https://github.com/Badestrand/russian-dictionary">OpenRussian dictionary data</a> (openrussian.org), CC BY-SA 4.0.</div>
+ <div class="m">• Тексты: <a style="color:#e6b94f" href="https://github.com/nevmenandr/word2vec-russian-novels">nevmenandr/word2vec-russian-novels</a> (Б. Орехов); произведения в общественном достоянии:</div>
  <div class="m" style="margin-top:6px">${W.map(w=>`${esc(w[0])}, «${esc(w[1])}» (${w[2]}) — ${C.filter(c=>W[c[5]]===w).length} карт.`).join('<br>')}</div></div>`}
 function vtable(v){const m=V[v],f=m[6].map(ac),c=C.filter(x=>x[1]===v).length;
  return`<div class="gl">${m[2]==='p'?'сов.':'несов.'}${m[3]&&m[3]!=='-'?' · пара: '+esc(m[3].replace(/[,;]/g,', ')):''} · ${c} карт.</div><div class="gl">OpenRussian: “${esc(m[4])}”</div>
@@ -136,7 +140,7 @@ async function showW(el){if(selW)selW.classList.remove('sel');selW=el;el.classLi
  let E=[];try{await lex();E=LEX[k]||[]}catch(e){}
  const wl=w=>'https://en.wiktionary.org/wiki/'+encodeURIComponent(w.replace(/\u0301/g,'').toLowerCase());
  sh.innerHTML=`<div class="k"><button class="x" onclick="closeW()" aria-label="Закрыть">×</button><h3>${esc(raw)}</h3>${E.length?E.map(e=>`<div style="margin-top:8px"><b>${st(esc(e[0]))}</b> <span class="gl">${esc(e[1])}</span><div>${esc(e[2])}</div></div>`).join(''):'<div class="m">Нет в словаре OpenRussian (часто это причастие, деепричастие или имя).</div>'}
- <div class="m" style="margin-top:10px"><a style="color:#ff8d9b" target="_blank" rel="noopener" href="${wl(E[0]?E[0][0]:raw)}">Wiktionary →</a> · OpenRussian, CC BY-SA 4.0</div></div>`}
+ <div class="m" style="margin-top:10px"><a style="color:#e6b94f" target="_blank" rel="noopener" href="${wl(E[0]?E[0][0]:raw)}">Wiktionary →</a> · OpenRussian, CC BY-SA 4.0</div></div>`}
 document.addEventListener('click',e=>{const w=e.target.closest('span.w');if(w){showW(w);return}if(!e.target.closest('#sheet'))closeW()});
 /* Supabase (shares login with Daily Discipline; own table rus_snapshots, own storage keys) */
 const SB='https://hrhlgscfgqjqslejlpqa.supabase.co',KEY='sb_publishable_GeOYErBznt6Y60TeU9oJcA_hK_Ugwyy';
