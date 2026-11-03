@@ -16,8 +16,11 @@ nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:#1b1c1d;borde
 .src{color:#c4c3bc;font-size:14px;margin-top:4px}.q{border-left:4px solid #b30f27;padding:2px 0 2px 10px;margin:10px 0}.q .ru{font-size:18px}
 u{text-decoration:none;border-bottom:2px solid #ff8d9b}.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.chip{border:2px solid #1b1c1d;background:#4a4b4d;color:#eeebe3;padding:8px 10px;font-size:12px}.chip.on{background:#b30f27;color:#fff}
 details{border-top:1px solid #4a4b4d;padding:6px 0}summary{cursor:pointer;font-size:18px;list-style:none}summary::-webkit-details-marker{display:none}.gl{color:#c4c3bc;font-size:14px}
+span.w{cursor:pointer;border-radius:2px}span.w:active,span.w.sel{background:#b30f27;color:#fff}
+#sheet{position:fixed;left:0;right:0;bottom:calc(64px + env(safe-area-inset-bottom,0px));z-index:5;display:none}#sheet .k{max-width:488px;margin:0 auto 8px;border-color:#b30f27;max-height:50vh;overflow:auto}
+.x{float:right;background:none;border:0;color:#c4c3bc;font-size:22px;line-height:1;padding:0 4px}
 h4{font:500 13px Oswald,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#ff8d9b;margin:14px 0 4px}
-</style></head><body><main id="app"></main><nav id="nav"></nav>
+</style></head><body><main id="app"></main><div id="sheet"></div><nav id="nav"></nav>
 <script src="data.js"></script>
 <script>
 const IV=[0,1,3,7,16,35],K='rus1';
@@ -88,7 +91,8 @@ function next(){Q.shift();tries=0;fb=null;msg='';render()}
 function suspend(){S.sus[Q[0]]=Date.now();Q=Q.filter(i=>i!==Q[0]);tries=0;fb=null;msg='';save();render()}
 const st=a=>a.replace(/([аеёиоуыэюяАЕЁИОУЫЭЮЯ])́/g,'<b style="color:#ff8d9b">$1́</b>');
 const hl=(s,w)=>{const e=esc(s),i=e.indexOf(w);return i<0?e:e.slice(0,i)+'<u>'+e.slice(i,i+w.length)+'</u>'+e.slice(i+w.length)};
-const quote=q=>`<div class="q"><div class="ru">«${hl(q[0],q[2])}»</div><div class="src">${esc(src(q[1]))}</div></div>`;
+const tw=h=>h.replace(/[А-Яа-яЁё\u0301]+(?:-[А-Яа-яЁё\u0301]+)*/g,m=>`<span class="w">${m}</span>`);
+const quote=q=>`<div class="q"><div class="ru">«${tw(hl(q[0],q[2]))}»</div><div class="src">${esc(src(q[1]))}</div></div>`;
 const setN=n=>{S.set.n=n;save();render()};const tgl=d=>{S.set.d[d]=S.set.d[d]?0:1;save();render()};
 function home(){const q=queue(),due=q.filter(i=>S.cards[i]).length,tg=Object.entries(S.tg).filter(([k,v])=>v[1]>=3).map(([k,v])=>[k,v[0]/v[1]]).sort((a,b)=>a[1]-b[1]).slice(0,4);
  const seen=Object.keys(S.cards).length,tot=ALLIDS.length;
@@ -99,9 +103,9 @@ function home(){const q=queue(),due=q.filter(i=>S.cards[i]).length,tg=Object.ent
  <div class="m" style="margin-top:10px">${C.length} карточек из русской классики · ${Object.keys(V).length} глаголов в словаре</div></div>`}
 function drill(){if(!Q.length)return`<div class="b o"><span>★ Смена окончена</span></div><div class="k"><h3>Готово</h3><div class="m">Сделано ${TOT} карточек. Возвращайтесь завтра.</div><button class="btn" onclick="tab='home';render()">На главную</button></div>`;
  const c=card(Q[0]);
- const full=esc(c.sent).replace('___','<u>'+st(c.ans)+'</u>');
+ const full=tw(esc(c.sent)).replace('___','<u><span class="w">'+st(c.ans)+'</span></u>');
  const body=fb?`<div class="k"><h3 class="${fb.g?'ok':'bad'}">${fb.g===2?'Верно':fb.g===1?'Верно со второго раза':'Неверно'}</h3><div class="ru">${full}</div>${c.src!=null?`<div class="src">— ${esc(src(c.src))}</div>`:''}<div style="margin-top:10px">${st(esc(c.rule))}</div>${c.gloss?`<div class="gl" style="margin-top:6px">OpenRussian: “${esc(c.gloss)}”</div>`:''}<button class="btn" onclick="next()">Дальше</button>${c.src!=null?'<button class="lnk" onclick="suspend()">Убрать эту карточку</button>':''}</div>`
- :`<div class="k"><h3>${esc(c.hint)}</h3><div class="ru">${esc(c.sent).replace('___','<b style="color:#ff8d9b">___</b>')}</div>${c.src!=null?`<div class="src">— ${esc(src(c.src))}</div>`:''}<input id="a" autocapitalize="off" autocorrect="off" spellcheck="false" lang="ru" autocomplete="off" aria-label="Ответ" onkeydown="if(event.key==='Enter')check()"><div class="bad" style="margin-top:6px">${esc(msg)}</div><div class="m">Ударение не нужно · е = ё</div><button class="btn" onclick="check()">Проверить</button></div>`;
+ :`<div class="k"><h3>${esc(c.hint)}</h3><div class="ru">${tw(esc(c.sent)).replace('___','<b style="color:#ff8d9b">___</b>')}</div>${c.src!=null?`<div class="src">— ${esc(src(c.src))}</div>`:''}<input id="a" autocapitalize="off" autocorrect="off" spellcheck="false" lang="ru" autocomplete="off" aria-label="Ответ" onkeydown="if(event.key==='Enter')check()"><div class="bad" style="margin-top:6px">${esc(msg)}</div><div class="m">Ударение не нужно · е = ё · нажмите на слово — перевод</div><button class="btn" onclick="check()">Проверить</button></div>`;
  return`<div class="b o"><span>★ Упражнение</span><span>Осталось ${Q.length}</span></div>${body}`}
 function rules(){return`<div class="b o"><span>★ Правила</span><span>${R.length} тем</span></div>`+R.map(r=>`<div class="k"><h3>${esc(r.h)}</h3>${(r.p||[]).map(p=>`<div style="margin-bottom:6px">${st(esc(p))}</div>`).join('')}
  ${r.pairs?`<table>${B.map(b=>`<tr><td>${st(ac(V[b[0]][6][0]))} / ${st(ac(V[b[1]][6][0]))}</td><td class="m">${esc(b[2])}<br>“${esc(V[b[0]][4])}”</td></tr>`).join('')}</table>`:''}
@@ -124,6 +128,16 @@ function stats(){const bx=[0,1,2,3,4,5].map(i=>Object.values(S.cards).filter(c=>
  return`<div class="b o"><span>★ Итоги</span><span>Серия ${streak()}</span></div><div class="k"><h3>Коробки (0 · 1д · 3д · 7д · 16д · 35д)</h3><div style="display:flex;gap:6px;align-items:flex-end;height:90px">${bx.map(v=>`<div style="flex:1;background:#b30f27;height:${v/mx*90+3}px" title="${v}"></div>`).join('')}</div><div class="m" style="display:flex;justify-content:space-around;margin-top:4px">${bx.map(v=>`<span>${v}</span>`).join('')}</div></div>
  <div class="k"><h3>Ошибки (последние)</h3>${S.log.slice(-8).reverse().map(x=>{const c=card(x.id);return c?`<div class="m">${esc(x.a)} → <span class="ok">${st(c.ans)}</span> · ${esc(c.hint)}</div>`:''}).join('')||'<div class="m">Пока пусто.</div>'}</div>
  ${ns?`<div class="k"><h3>Убранные карточки</h3><div class="m">${ns} шт.</div><button class="btn g" onclick="S.sus={};save();render()">Вернуть все</button></div>`:''}${cloud()}`}
+/* Tap-to-translate: lex.js (OpenRussian glosses) loads on first tap */
+let lexP=null;const lex=()=>lexP||(lexP=new Promise((ok,no)=>{const sc=document.createElement('script');sc.src='lex.js';sc.onload=ok;sc.onerror=()=>{lexP=null;no()};document.head.appendChild(sc)}));
+let selW=null;const closeW=()=>{document.getElementById('sheet').style.display='none';if(selW)selW.classList.remove('sel');selW=null};
+async function showW(el){if(selW)selW.classList.remove('sel');selW=el;el.classList.add('sel');const raw=el.textContent.replace(/\u0301/g,''),k=norm(raw),sh=document.getElementById('sheet');
+ sh.innerHTML='<div class="k"><div class="m">…</div></div>';sh.style.display='block';
+ let E=[];try{await lex();E=LEX[k]||[]}catch(e){}
+ const wl=w=>'https://en.wiktionary.org/wiki/'+encodeURIComponent(w.replace(/\u0301/g,'').toLowerCase());
+ sh.innerHTML=`<div class="k"><button class="x" onclick="closeW()" aria-label="Закрыть">×</button><h3>${esc(raw)}</h3>${E.length?E.map(e=>`<div style="margin-top:8px"><b>${st(esc(e[0]))}</b> <span class="gl">${esc(e[1])}</span><div>${esc(e[2])}</div></div>`).join(''):'<div class="m">Нет в словаре OpenRussian (часто это причастие, деепричастие или имя).</div>'}
+ <div class="m" style="margin-top:10px"><a style="color:#ff8d9b" target="_blank" rel="noopener" href="${wl(E[0]?E[0][0]:raw)}">Wiktionary →</a> · OpenRussian, CC BY-SA 4.0</div></div>`}
+document.addEventListener('click',e=>{const w=e.target.closest('span.w');if(w){showW(w);return}if(!e.target.closest('#sheet'))closeW()});
 /* Supabase (shares login with Daily Discipline; own table rus_snapshots, own storage keys) */
 const SB='https://hrhlgscfgqjqslejlpqa.supabase.co',KEY='sb_publishable_GeOYErBznt6Y60TeU9oJcA_hK_Ugwyy';
 let AU=null,SYT='Не в сети';try{AU=JSON.parse(localStorage.getItem('rus_auth'));if(AU)SYT='…'}catch(e){}
@@ -137,12 +151,12 @@ function merge(o){for(const[i,c]of Object.entries(o.cards||{})){const m=S.cards[
  if(o.set&&!S.setT)S.set={...S.set,...o.set,d:{...S.set.d,...(o.set.d||{})}};
  const seen=new Set(S.log.map(x=>x.t));(o.log||[]).forEach(x=>{if(!seen.has(x.t))S.log.push(x)});S.log=S.log.sort((a,b)=>a.t-b.t).slice(-200)}
 async function sync(){if(!AU)return;try{const r=await sb('rus_snapshots?select=data');if(r[0])merge(r[0].data);S.setT=1;persist();
- await sb('rus_snapshots?on_conflict=user_id',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({user_id:AU.uid,data:{cards:S.cards,tg:S.tg,log:S.log,days:S.days,sus:S.sus,set:S.set},updated_at:new Date().toISOString()})});SYT='Синхронизировано '+new Date().toTimeString().slice(0,5);if(tab!=='drill'&&tab!=='dict')render()}catch(e){SYT='Ошибка: '+e.message.slice(0,140);if(tab==='stats')render()}}
+ await sb('rus_snapshots?on_conflict=user_id',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({user_id:AU.uid,data:{cards:S.cards,tg:S.tg,log:S.log,days:S.days,sus:S.sus,set:S.set},updated_at:new Date().toISOString()})});SYT='Синхронизировано '+new Date().toTimeString().slice(0,5);if(tab!=='drill'&&tab!=='dict')render()}catch(e){SYT=(/42501/.test(e.message)?'Нет прав на таблицу rus_snapshots. Запустите schema.sql в Supabase → SQL editor. ':'')+'Ошибка: '+e.message.slice(0,300);if(tab==='stats')render()}}
 async function signIn(){try{await auth({email:document.getElementById('em').value.trim(),password:document.getElementById('pw').value},'password');await sync();render()}catch(e){SYT=e.message;render()}}
 const signOut=()=>{AU=null;saveAU();SYT='Не в сети';render()};
 const cloud=()=>AU?`<div class="k"><h3>Облако</h3><div class="m">${esc(AU.em)}</div><div class="m">${esc(SYT)}</div><button class="btn" onclick="sync()">Синхронизировать</button><button class="btn g" onclick="signOut()">Выйти</button></div>`:`<div class="k"><h3>Облако</h3><div class="m">Тот же email и пароль, что в Daily Discipline.</div><input id="em" type="email" autocomplete="username" placeholder="Email"><input id="pw" type="password" autocomplete="current-password" placeholder="Пароль"><button class="btn" onclick="signIn()">Войти</button><div class="m" style="margin-top:6px">${esc(SYT)}</div></div>`;
 const TABS={home:['Смена',home],drill:['Упражнение',drill],rules:['Правила',rules],dict:['Словарь',dict],stats:['Итоги',stats]};
-function render(){document.getElementById('app').innerHTML=TABS[tab][1]();document.getElementById('nav').innerHTML=Object.entries(TABS).map(([k,v])=>`<button class="${tab===k?'on':''}" onclick="tab='${k}';${k==='drill'?'if(!Q.length)start();else ':''}render();scrollTo(0,0)">${v[0]}</button>`).join('');const a=document.getElementById('a');if(a&&!fb)a.focus()}
+function render(){closeW();document.getElementById('app').innerHTML=TABS[tab][1]();document.getElementById('nav').innerHTML=Object.entries(TABS).map(([k,v])=>`<button class="${tab===k?'on':''}" onclick="tab='${k}';${k==='drill'?'if(!Q.length)start();else ':''}render();scrollTo(0,0)">${v[0]}</button>`).join('');const a=document.getElementById('a');if(a&&!fb)a.focus()}
 render();if(AU)sync();document.addEventListener('visibilitychange',()=>{if(AU&&!document.hidden)sync()});
 try{if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js')}catch(e){}
 </script></body></html>
