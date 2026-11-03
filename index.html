@@ -4,22 +4,29 @@
 <meta name="theme-color" content="#b30f27"><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icon-192.png"><link rel="apple-touch-icon" href="icon-180.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"><meta name="apple-mobile-web-app-title" content="Глаголы">
 <style>
 *{box-sizing:border-box}html,body{margin:0}body{font:17px/1.4 "Roboto Condensed",sans-serif;color:#1b1c1d;background:linear-gradient(135deg,#9a9b98,#85867f 55%,#92938f) fixed;min-height:100vh}
-main{max-width:520px;margin:0 auto;padding:0 0 110px}.o,h1,h3,.btn,nav button{font-family:Oswald,sans-serif;text-transform:uppercase;letter-spacing:.12em}
+main{max-width:520px;margin:0 auto;padding:0 0 110px}.o,h1,h3,.btn,nav button,.chip{font-family:Oswald,sans-serif;text-transform:uppercase;letter-spacing:.12em}
 .b{background:#b30f27;color:#f3efe6;padding:calc(12px + env(safe-area-inset-top,0px)) 16px 12px;display:flex;justify-content:space-between;font-size:14px;border-bottom:4px solid #1b1c1d}
 .k{background:#2b2c2e;color:#eeebe3;border:3px solid #1b1c1d;box-shadow:6px 6px 0 #1b1c1d;padding:14px;margin:16px}.k h3{margin:0 0 8px;font-size:15px;color:#ff8d9b;font-weight:500}.m{color:#c4c3bc;font-size:14px}
 .btn{display:block;width:100%;min-height:48px;border:3px solid #1b1c1d;background:#b30f27;color:#fff;font-size:16px;margin-top:12px;box-shadow:4px 4px 0 #1b1c1d}.btn.g{background:#3a4a3f}
+.lnk{background:none;border:0;color:#c4c3bc;text-decoration:underline;font:14px "Roboto Condensed",sans-serif;margin-top:10px;padding:6px 0}
 .big{font:600 44px Oswald,sans-serif;color:#fff}.t{height:12px;background:#4a4b4d;margin:4px 0 12px}.t i{display:block;height:100%;background:#d8213a}
 .ru{font-size:22px;line-height:1.35}input{display:block;width:100%;min-height:54px;margin-top:10px;border:3px solid #1b1c1d;background:#e8e4da;font:24px "Roboto Condensed",sans-serif;padding:8px 12px;color:#1b1c1d}
-nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:#1b1c1d;border-top:4px solid #b30f27}nav button{flex:1;background:none;border:0;color:#c4c3bc;font-size:12px;padding:14px 0 calc(22px + env(safe-area-inset-bottom,0px))}nav .on{background:#b30f27;color:#fff}
-.ok{color:#6fd68c}.bad{color:#ff8d9b}table{width:100%;border-collapse:collapse;font-size:16px}td{padding:5px 4px;border-top:1px solid #4a4b4d}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;background:#1b1c1d;border-top:4px solid #b30f27}nav button{flex:1;background:none;border:0;color:#c4c3bc;font-size:11px;letter-spacing:.06em;padding:14px 0 calc(22px + env(safe-area-inset-bottom,0px))}nav .on{background:#b30f27;color:#fff}
+.ok{color:#6fd68c}.bad{color:#ff8d9b}table{width:100%;border-collapse:collapse;font-size:16px}td{padding:5px 4px;border-top:1px solid #4a4b4d;vertical-align:top}
+.src{color:#c4c3bc;font-size:14px;margin-top:4px}.q{border-left:4px solid #b30f27;padding:2px 0 2px 10px;margin:10px 0}.q .ru{font-size:18px}
+u{text-decoration:none;border-bottom:2px solid #ff8d9b}.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}.chip{border:2px solid #1b1c1d;background:#4a4b4d;color:#eeebe3;padding:8px 10px;font-size:12px}.chip.on{background:#b30f27;color:#fff}
+details{border-top:1px solid #4a4b4d;padding:6px 0}summary{cursor:pointer;font-size:18px;list-style:none}summary::-webkit-details-marker{display:none}.gl{color:#c4c3bc;font-size:14px}
+h4{font:500 13px Oswald,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#ff8d9b;margin:14px 0 4px}
 </style></head><body><main id="app"></main><nav id="nav"></nav>
+<script src="data.js"></script>
 <script>
-const IV=[0,1,3,7,16,35],NEWMAX=7,K='rus1';
+const IV=[0,1,3,7,16,35],K='rus1';
 const iso=d=>d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
 const today=iso(new Date()),addD=n=>{const d=new Date();d.setDate(d.getDate()+n);return iso(d)};
 const esc=s=>String(s==null?'':s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
-const norm=s=>s.replace(/\u0301/g,'').toLowerCase().replace(/ё/g,'е').trim();
-/* id, tag, sentence, hint, answer (stressed), rule */
+const norm=s=>s.replace(/́/g,'').toLowerCase().replace(/ё/g,'е').trim();
+const ac=s=>String(s||'').replace(/'/g,'́');
+/* Урок 1 (original hand-written deck): id, tag, sentence, hint, answer (stressed), rule */
 const L=[
 ['m1','идти','Сейчас я ___ в магазин.','идти / ходить','иду́','Один конкретный путь, прямо сейчас → идти́: я иду́, ты идёшь, они иду́т.'],
 ['m2','идти','Я каждый день ___ в университет пешком.','идти / ходить','хожу́','Привычка, повторение → ходи́ть: я хожу́, ты хо́дишь.'],
@@ -42,40 +49,81 @@ const L=[
 ['p2','приставки','Он обычно ___ из дома в восемь.','выйти / выходить','выхо́дит','Обычно → несовершенный вид: выходи́ть (выхожу́, выхо́дишь).'],
 ['p3','приставки','Завтра я ___ к тебе в гости.','прийти / приходить','приду́','Один раз в будущем → прийти́: приду́, придёшь, придёт. к + дат. п.'],
 ['p4','приставки','Каждый день она ___ домой в шесть.','прийти / приходить','прихо́дит','Каждый день → приходи́ть: прихожу́, прихо́дишь.']];
-let S={cards:{},tg:{},log:[],days:{}};
-try{S={...S,...JSON.parse(localStorage.getItem(K))}}catch(e){}
-let tab='home',Q=[],TOT=0,tries=0,fb=null,msg='';
+/* V[verb] = [kind u|m|p, base group, aspect p|i, OpenRussian partner, OpenRussian English gloss, prefix, forms[13], pair label] */
+const TL=['инфинитив','повел., ты','повел., вы','прош., он','прош., она','прош., оно','прош., они','я','ты','он / она','мы','вы','они'];
+const PM={'в':'внутрь','вы':'наружу','при':'прибытие','у':'уход','под':'приближение','от':'удаление','пере':'через','про':'мимо, сквозь','до':'до цели','за':'по пути, за чем-то','об':'вокруг','с':'вниз, с','по':'начало движения','раз':'в разные стороны'};
+const LM=Object.fromEntries(L.map(c=>[c[0],c]));const CM=Object.fromEntries(C.map(c=>[c[0],c]));
+const src=i=>{const w=W[i];return`${w[0]}, «${w[1]}», ${w[2]}`};
+function card(id){const l=LM[id];if(l)return{id,deck:'l1',tag:l[1],sent:l[2],hint:l[3],ans:l[4],rule:l[5]};
+ const c=CM[id];if(!c)return null;const v=V[c[1]],k=v[0],tag=k==='p'?v[5]+'-':v[1],inf=ac(v[6][0]);
+ const rule=k==='u'?`${inf} — однонаправленный: одно движение в одну сторону (сейчас, конкретный путь, фон в прошлом).`
+  :k==='m'?`${inf} — разнонаправленный: повторение, привычка, туда и обратно, без направления, умение.`
+  :v[5]==='по'&&v[2]==='p'?`${inf}: по- + однонаправленный → совершенный вид, начало движения («отправиться»).`
+  :v[2]==='p'?`${inf}: ${v[5]}- (${PM[v[5]]||'приставка'}) + однонаправленный → совершенный вид: одно законченное действие, результат.`
+  :`${inf}: ${v[5]}- (${PM[v[5]]||'приставка'}) + разнонаправленный → несовершенный вид: процесс, повторение, привычка.`;
+ return{id,deck:k==='p'?'pref':'base',tag,verb:c[1],ti:c[2],sent:c[3],hint:v[7]+' · '+TL[c[2]],ans:c[4],rule,src:c[5],gloss:v[4]}}
+function alts(c){if(!c.verb)return[];const v=V[c.verb],o=[];v[7].split(' / ').forEach(x=>{x=x.trim();if(x!==c.verb&&V[x])o.push(V[x][6][c.ti])});
+ return o.flatMap(f=>String(f||'').split(/[,;]/)).map(f=>norm(f.replace(/'/g,''))).filter(Boolean)}
+let S={cards:{},tg:{},log:[],days:{},sus:{},set:{n:10,d:{l1:1,base:1,pref:1}}};
+try{const o=JSON.parse(localStorage.getItem(K));if(o)S={...S,...o,set:{...S.set,...(o.set||{}),d:{...S.set.d,...((o.set||{}).d||{})}}}}catch(e){}
+let tab='home',Q=[],TOT=0,tries=0,fb=null,msg='',dq='';
 const persist=()=>{try{localStorage.setItem(K,JSON.stringify(S))}catch(e){}};
 let pt;const save=()=>{persist();if(AU){clearTimeout(pt);pt=setTimeout(sync,4000)}};
 const streak=()=>{let n=0,i=S.days[today]?0:1;while(S.days[addD(-i)]){n++;i++}return n};
-function queue(){const due=L.filter(c=>S.cards[c[0]]&&S.cards[c[0]].due<=today),fresh=L.filter(c=>!S.cards[c[0]]),used=Object.values(S.cards).filter(c=>c.f===today).length;
- return due.concat(fresh.slice(0,Math.max(0,NEWMAX-used))).map(c=>c[0])}
+const ALLIDS=L.map(c=>c[0]).concat(C.map(c=>c[0]));
+const live=id=>{const c=card(id);return c&&!S.sus[id]&&S.set.d[c.deck]};
+function queue(){const ids=ALLIDS.filter(live),due=ids.filter(i=>S.cards[i]&&S.cards[i].due<=today),fresh=ids.filter(i=>!S.cards[i]),used=Object.values(S.cards).filter(c=>c.f===today).length;
+ return due.concat(fresh.slice(0,Math.max(0,S.set.n-used)))}
 function start(){Q=queue();TOT=Q.length;tries=0;fb=null;msg='';tab='drill';render()}
-function check(){const v=document.getElementById('a').value;if(!v.trim())return;const c=L.find(x=>x[0]===Q[0]);
- if(norm(v)===norm(c[4])){grade(c,tries?1:2,v)}
- else if(!tries){tries=1;msg='Не совсем. Попробуйте ещё раз.';render();document.getElementById('a').focus()}
- else{S.log.push({t:Date.now(),id:c[0],a:v});S.log=S.log.slice(-200);grade(c,0,v)}}
-function grade(c,g,v){const id=c[0],s=S.cards[id]||{b:0,f:today};
- if(!tries){const t=S.tg[c[1]]||[0,0];t[1]++;if(g===2)t[0]++;S.tg[c[1]]=t}
+function check(){const v=document.getElementById('a').value;if(!v.trim())return;const c=card(Q[0]);
+ if(norm(v)===norm(c.ans)){grade(c,tries?1:2,v)}
+ else if(alts(c).includes(norm(v))){msg='Форма верная, но у автора другой глагол пары. Подумайте, почему.';render()}
+ else if(!tries){tries=1;msg='Не совсем. Попробуйте ещё раз.';render()}
+ else{S.log.push({t:Date.now(),id:c.id,a:v});S.log=S.log.slice(-200);grade(c,0,v)}}
+function grade(c,g,v){const id=c.id,s=S.cards[id]||{b:0,f:today};
+ if(!tries){const t=S.tg[c.tag]||[0,0];t[1]++;if(g===2)t[0]++;S.tg[c.tag]=t}
  s.b=g===2?Math.min(5,s.b+1):g===1?Math.max(1,s.b):0;s.due=addD(IV[s.b]);s.t=Date.now();S.cards[id]=s;S.days[today]=(S.days[today]||0)+1;
  if(g===0)Q.push(id);fb={g};msg='';save();render()}
 function next(){Q.shift();tries=0;fb=null;msg='';render()}
-const st=a=>a.replace(/([аеёиоуыэюя])\u0301/g,'<b style="color:#ff8d9b">$1\u0301</b>');
-function home(){const q=queue(),due=q.filter(i=>S.cards[i]).length,tg=Object.entries(S.tg).map(([k,v])=>[k,v[0]/v[1]]).sort((a,b)=>a[1]-b[1]).slice(0,3);
- return`<div class="b o"><span>★ Глаголы</span><span>Серия ${streak()}</span></div><div class="k"><h3>Норма сегодня</h3><div style="display:flex;gap:28px"><div><div class="big">${due}</div><div class="m">повторений</div></div><div><div class="big">${q.length-due}</div><div class="m">новых</div></div></div><button class="btn" onclick="start()">${q.length?'Начать смену ★':'Норма выполнена'}</button></div>
- <div class="k"><h3>Слабые места</h3>${tg.length?tg.map(([k,v])=>`<div class="m">${k} ${Math.round(v*100)}%</div><div class="t"><i style="width:${v*100}%"></i></div>`).join(''):'<div class="m">Данные появятся после первой смены.</div>'}</div>`}
+function suspend(){S.sus[Q[0]]=Date.now();Q=Q.filter(i=>i!==Q[0]);tries=0;fb=null;msg='';save();render()}
+const st=a=>a.replace(/([аеёиоуыэюяАЕЁИОУЫЭЮЯ])́/g,'<b style="color:#ff8d9b">$1́</b>');
+const hl=(s,w)=>{const e=esc(s),i=e.indexOf(w);return i<0?e:e.slice(0,i)+'<u>'+e.slice(i,i+w.length)+'</u>'+e.slice(i+w.length)};
+const quote=q=>`<div class="q"><div class="ru">«${hl(q[0],q[2])}»</div><div class="src">${esc(src(q[1]))}</div></div>`;
+const setN=n=>{S.set.n=n;save();render()};const tgl=d=>{S.set.d[d]=S.set.d[d]?0:1;save();render()};
+function home(){const q=queue(),due=q.filter(i=>S.cards[i]).length,tg=Object.entries(S.tg).filter(([k,v])=>v[1]>=3).map(([k,v])=>[k,v[0]/v[1]]).sort((a,b)=>a[1]-b[1]).slice(0,4);
+ const seen=Object.keys(S.cards).length,tot=ALLIDS.length;
+ return`<div class="b o"><span>★ Глаголы</span><span>Серия ${streak()}</span></div><div class="k"><h3>Норма сегодня</h3><div style="display:flex;gap:28px"><div><div class="big">${due}</div><div class="m">повторений</div></div><div><div class="big">${q.length-due}</div><div class="m">новых</div></div></div><button class="btn" onclick="start()">${q.length?'Начать смену ★':'Норма выполнена'}</button><div class="m" style="margin-top:10px">Изучено ${seen} из ${tot} карточек</div><div class="t"><i style="width:${seen/tot*100}%"></i></div></div>
+ <div class="k"><h3>Слабые места</h3>${tg.length?tg.map(([k,v])=>`<div class="m">${esc(k)} ${Math.round(v*100)}%</div><div class="t"><i style="width:${v*100}%"></i></div>`).join(''):'<div class="m">Данные появятся после первых смен.</div>'}</div>
+ <div class="k"><h3>Настройки</h3><div class="m">Новых карточек в день</div><div class="chips">${[5,10,15,25].map(n=>`<button class="chip ${S.set.n===n?'on':''}" onclick="setN(${n})">${n}</button>`).join('')}</div>
+ <div class="m" style="margin-top:12px">Колоды</div><div class="chips">${[['l1','Урок 1'],['base','Без приставок'],['pref','С приставками']].map(([d,l])=>`<button class="chip ${S.set.d[d]?'on':''}" onclick="tgl('${d}')">${l}</button>`).join('')}</div>
+ <div class="m" style="margin-top:10px">${C.length} карточек из русской классики · ${Object.keys(V).length} глаголов в словаре</div></div>`}
 function drill(){if(!Q.length)return`<div class="b o"><span>★ Смена окончена</span></div><div class="k"><h3>Готово</h3><div class="m">Сделано ${TOT} карточек. Возвращайтесь завтра.</div><button class="btn" onclick="tab='home';render()">На главную</button></div>`;
- const c=L.find(x=>x[0]===Q[0]),n=TOT-Q.length+1;
- const body=fb?`<div class="k"><h3 class="${fb.g?'ok':'bad'}">${fb.g===2?'Верно':fb.g===1?'Верно со второго раза':'Неверно'}</h3><div class="ru">${st(c[2].replace('___',c[4]))}</div><div style="margin-top:8px">${esc(c[5])}</div><button class="btn" onclick="next()">Дальше</button></div>`
- :`<div class="k"><h3>${esc(c[3])}</h3><div class="ru">${esc(c[2])}</div><input id="a" autocapitalize="off" autocorrect="off" spellcheck="false" lang="ru" autocomplete="off" aria-label="Ответ" onkeydown="if(event.key==='Enter')check()"><div class="bad" style="margin-top:6px">${msg}</div><div class="m">Ударение не нужно · е = ё</div><button class="btn" onclick="check()">Проверить</button></div>`;
- return`<div class="b o"><span>★ Упражнение</span><span>${n}/${TOT+(Q.length+n-1-TOT)}</span></div>${body}`}
-function rules(){const T=[['идти́ / ходи́ть','пешком'],['е́хать / е́здить','транспорт'],['нести́ / носи́ть','нести'],['вести́ / води́ть','вести'],['лете́ть / лета́ть','лететь'],['бежа́ть / бе́гать','бежать'],['плыть / пла́вать','плыть']];
- return`<div class="b o"><span>★ Правила</span><span>Урок 1</span></div><div class="k"><h3>Один путь / повторение</h3><div>Первый глагол: одно направление, прямо сейчас. Второй: привычка, туда и обратно, общая способность.</div><table>${T.map(r=>`<tr><td>${st(r[0])}</td><td class="m">${r[1]}</td></tr>`).join('')}</table></div>
- <div class="k"><h3>Приставка → вид</h3><div>Приставка + первый глагол = совершенный (вы́йти, прийти́). Приставка + второй = несовершенный (выходи́ть, приходи́ть). Куда? в/на/к + вин./дат. Откуда? из/с/от + род.</div></div>
- <div class="k" style="border-color:#b30f27"><h3>Из книги</h3><div class="ru" style="font-size:18px">«…оди́н молодо́й челове́к вы́шел из свое́й камо́рки… на у́лицу и ме́дленно, как бы в нереши́мости, отпра́вился к К—ну мо́сту.»</div><div class="m" style="margin-top:6px">Ф. М. Достоевский, «Преступление и наказание», 1866</div></div>`}
-function stats(){const bx=[0,1,2,3,4,5].map(i=>Object.values(S.cards).filter(c=>c.b===i).length),mx=Math.max(1,...bx);
+ const c=card(Q[0]);
+ const full=esc(c.sent).replace('___','<u>'+st(c.ans)+'</u>');
+ const body=fb?`<div class="k"><h3 class="${fb.g?'ok':'bad'}">${fb.g===2?'Верно':fb.g===1?'Верно со второго раза':'Неверно'}</h3><div class="ru">${full}</div>${c.src!=null?`<div class="src">— ${esc(src(c.src))}</div>`:''}<div style="margin-top:10px">${st(esc(c.rule))}</div>${c.gloss?`<div class="gl" style="margin-top:6px">OpenRussian: “${esc(c.gloss)}”</div>`:''}<button class="btn" onclick="next()">Дальше</button>${c.src!=null?'<button class="lnk" onclick="suspend()">Убрать эту карточку</button>':''}</div>`
+ :`<div class="k"><h3>${esc(c.hint)}</h3><div class="ru">${esc(c.sent).replace('___','<b style="color:#ff8d9b">___</b>')}</div>${c.src!=null?`<div class="src">— ${esc(src(c.src))}</div>`:''}<input id="a" autocapitalize="off" autocorrect="off" spellcheck="false" lang="ru" autocomplete="off" aria-label="Ответ" onkeydown="if(event.key==='Enter')check()"><div class="bad" style="margin-top:6px">${esc(msg)}</div><div class="m">Ударение не нужно · е = ё</div><button class="btn" onclick="check()">Проверить</button></div>`;
+ return`<div class="b o"><span>★ Упражнение</span><span>Осталось ${Q.length}</span></div>${body}`}
+function rules(){return`<div class="b o"><span>★ Правила</span><span>${R.length} тем</span></div>`+R.map(r=>`<div class="k"><h3>${esc(r.h)}</h3>${(r.p||[]).map(p=>`<div style="margin-bottom:6px">${st(esc(p))}</div>`).join('')}
+ ${r.pairs?`<table>${B.map(b=>`<tr><td>${st(ac(V[b[0]][6][0]))} / ${st(ac(V[b[1]][6][0]))}</td><td class="m">${esc(b[2])}<br>“${esc(V[b[0]][4])}”</td></tr>`).join('')}</table>`:''}
+ ${r.pref?r.pref.map(p=>`<h4>${esc(p[0])} · ${esc(p[1])} · ${esc(p[2])}</h4>${quote(p[3])}`).join(''):''}
+ ${(r.ex||[]).map(quote).join('')}</div>`).join('')
+ +`<div class="k" style="border-color:#b30f27"><h3>Из книги</h3>${quote(FIRST)}</div>`
+ +`<div class="k"><h3>Источники и лицензии</h3><div class="m" style="margin-bottom:8px">Все примеры — дословные цитаты (изменены только тире). Ударения и английские значения — из словаря OpenRussian. Объяснения правил — краткие, от составителя.</div>
+ <div class="m">• Формы глаголов, ударения, видовые пары, переводы: <a style="color:#ff8d9b" href="https://github.com/Badestrand/russian-dictionary">OpenRussian dictionary data</a> (openrussian.org), CC BY-SA 4.0.</div>
+ <div class="m">• Тексты: <a style="color:#ff8d9b" href="https://github.com/nevmenandr/word2vec-russian-novels">nevmenandr/word2vec-russian-novels</a> (Б. Орехов); произведения в общественном достоянии:</div>
+ <div class="m" style="margin-top:6px">${W.map(w=>`${esc(w[0])}, «${esc(w[1])}» (${w[2]}) — ${C.filter(c=>W[c[5]]===w).length} карт.`).join('<br>')}</div></div>`}
+function vtable(v){const m=V[v],f=m[6].map(ac),c=C.filter(x=>x[1]===v).length;
+ return`<div class="gl">${m[2]==='p'?'сов.':'несов.'}${m[3]&&m[3]!=='-'?' · пара: '+esc(m[3].replace(/[,;]/g,', ')):''} · ${c} карт.</div><div class="gl">OpenRussian: “${esc(m[4])}”</div>
+ <table><tr><td class="m">я</td><td>${st(f[7])}</td><td class="m">мы</td><td>${st(f[10])}</td></tr><tr><td class="m">ты</td><td>${st(f[8])}</td><td class="m">вы</td><td>${st(f[11])}</td></tr><tr><td class="m">он</td><td>${st(f[9])}</td><td class="m">они</td><td>${st(f[12])}</td></tr>
+ <tr><td class="m">прош.</td><td colspan="3">${[3,4,5,6].map(i=>st(f[i])).join(', ')}</td></tr><tr><td class="m">повел.</td><td colspan="3">${st(f[1])}, ${st(f[2])}</td></tr></table>`}
+function dict(){
+ return`<div class="b o"><span>★ Словарь</span><span>${Object.keys(V).length} глаголов</span></div><div class="k"><h3>Поиск</h3><input id="dq" value="${esc(dq)}" placeholder="прийти, carry…" autocapitalize="off" autocomplete="off" oninput="dq=this.value;document.getElementById('dl').innerHTML=dlist()"><div class="m" style="margin-top:6px">Данные: OpenRussian, CC BY-SA 4.0</div></div><div id="dl">${dlist()}</div>`}
+function dlist(){const q=norm(dq);return B.map(b=>{const vs=Object.keys(V).filter(v=>V[v][1]===b[0]&&(!q||norm(v).includes(q)||V[v][4].toLowerCase().includes(q))).sort((a,c)=>(V[a][0]>V[c][0])-(V[a][0]<V[c][0])||(V[a][7]>V[c][7])-(V[a][7]<V[c][7])||(V[a][2]>V[c][2])-(V[a][2]<V[c][2]));
+ return vs.length?`<div class="k"><h3>${esc(b[0])} / ${esc(b[1])}</h3>${vs.map(v=>`<details ontoggle="if(this.open&&!this.dataset.f){this.insertAdjacentHTML('beforeend',vtable('${v}'));this.dataset.f=1}"><summary>${st(ac(V[v][6][0]))} <span class="gl">${V[v][2]==='p'?'сов.':'несов.'} · ${esc(V[v][4].split(',').slice(0,3).join(','))}</span></summary></details>`).join('')}</div>`:''}).join('')||'<div class="k"><div class="m">Ничего не найдено.</div></div>'}
+function stats(){const bx=[0,1,2,3,4,5].map(i=>Object.values(S.cards).filter(c=>c.b===i).length),mx=Math.max(1,...bx),ns=Object.keys(S.sus).length;
  return`<div class="b o"><span>★ Итоги</span><span>Серия ${streak()}</span></div><div class="k"><h3>Коробки (0 · 1д · 3д · 7д · 16д · 35д)</h3><div style="display:flex;gap:6px;align-items:flex-end;height:90px">${bx.map(v=>`<div style="flex:1;background:#b30f27;height:${v/mx*90+3}px" title="${v}"></div>`).join('')}</div><div class="m" style="display:flex;justify-content:space-around;margin-top:4px">${bx.map(v=>`<span>${v}</span>`).join('')}</div></div>
- <div class="k"><h3>Ошибки (последние)</h3>${S.log.slice(-5).reverse().map(x=>{const c=L.find(y=>y[0]===x.id);return c?`<div class="m">${esc(x.a)} → <span class="ok">${st(c[4])}</span> · ${esc(c[3])}</div>`:''}).join('')||'<div class="m">Пока пусто.</div>'}</div>${cloud()}`}
+ <div class="k"><h3>Ошибки (последние)</h3>${S.log.slice(-8).reverse().map(x=>{const c=card(x.id);return c?`<div class="m">${esc(x.a)} → <span class="ok">${st(c.ans)}</span> · ${esc(c.hint)}</div>`:''}).join('')||'<div class="m">Пока пусто.</div>'}</div>
+ ${ns?`<div class="k"><h3>Убранные карточки</h3><div class="m">${ns} шт.</div><button class="btn g" onclick="S.sus={};save();render()">Вернуть все</button></div>`:''}${cloud()}`}
 /* Supabase (shares login with Daily Discipline; own table rus_snapshots, own storage keys) */
 const SB='https://hrhlgscfgqjqslejlpqa.supabase.co',KEY='sb_publishable_GeOYErBznt6Y60TeU9oJcA_hK_Ugwyy';
 let AU=null,SYT='Не в сети';try{AU=JSON.parse(localStorage.getItem('rus_auth'));if(AU)SYT='…'}catch(e){}
@@ -85,14 +133,16 @@ async function sb(p,o={}){if(AU.exp-30000<Date.now())await auth({refresh_token:A
 function merge(o){for(const[i,c]of Object.entries(o.cards||{})){const m=S.cards[i];if(!m||(c.t||0)>(m.t||0))S.cards[i]=c}
  for(const[k,v]of Object.entries(o.tg||{})){const m=S.tg[k]||[0,0];S.tg[k]=[Math.max(m[0],v[0]),Math.max(m[1],v[1])]}
  for(const[k,v]of Object.entries(o.days||{}))S.days[k]=Math.max(S.days[k]||0,v);
+ for(const[k,v]of Object.entries(o.sus||{}))S.sus[k]=v;
+ if(o.set&&!S.setT)S.set={...S.set,...o.set,d:{...S.set.d,...(o.set.d||{})}};
  const seen=new Set(S.log.map(x=>x.t));(o.log||[]).forEach(x=>{if(!seen.has(x.t))S.log.push(x)});S.log=S.log.sort((a,b)=>a.t-b.t).slice(-200)}
-async function sync(){if(!AU)return;try{const r=await sb('rus_snapshots?select=data');if(r[0])merge(r[0].data);persist();
- await sb('rus_snapshots?on_conflict=user_id',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({user_id:AU.uid,data:{cards:S.cards,tg:S.tg,log:S.log,days:S.days},updated_at:new Date().toISOString()})});SYT='Синхронизировано '+new Date().toTimeString().slice(0,5);if(tab!=='drill')render()}catch(e){SYT='Ошибка: '+e.message.slice(0,140);if(tab==='stats')render()}}
+async function sync(){if(!AU)return;try{const r=await sb('rus_snapshots?select=data');if(r[0])merge(r[0].data);S.setT=1;persist();
+ await sb('rus_snapshots?on_conflict=user_id',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({user_id:AU.uid,data:{cards:S.cards,tg:S.tg,log:S.log,days:S.days,sus:S.sus,set:S.set},updated_at:new Date().toISOString()})});SYT='Синхронизировано '+new Date().toTimeString().slice(0,5);if(tab!=='drill'&&tab!=='dict')render()}catch(e){SYT='Ошибка: '+e.message.slice(0,140);if(tab==='stats')render()}}
 async function signIn(){try{await auth({email:document.getElementById('em').value.trim(),password:document.getElementById('pw').value},'password');await sync();render()}catch(e){SYT=e.message;render()}}
 const signOut=()=>{AU=null;saveAU();SYT='Не в сети';render()};
 const cloud=()=>AU?`<div class="k"><h3>Облако</h3><div class="m">${esc(AU.em)}</div><div class="m">${esc(SYT)}</div><button class="btn" onclick="sync()">Синхронизировать</button><button class="btn g" onclick="signOut()">Выйти</button></div>`:`<div class="k"><h3>Облако</h3><div class="m">Тот же email и пароль, что в Daily Discipline.</div><input id="em" type="email" autocomplete="username" placeholder="Email"><input id="pw" type="password" autocomplete="current-password" placeholder="Пароль"><button class="btn" onclick="signIn()">Войти</button><div class="m" style="margin-top:6px">${esc(SYT)}</div></div>`;
-const TABS={home:['Смена',home],drill:['Упражнение',drill],rules:['Правила',rules],stats:['Итоги',stats]};
-function render(){document.getElementById('app').innerHTML=TABS[tab][1]();document.getElementById('nav').innerHTML=Object.entries(TABS).map(([k,v])=>`<button class="${tab===k?'on':''}" onclick="tab='${k}';${k==='drill'?'if(!Q.length)start();else ':''}render();scrollTo(0,0)">${v[0]}</button>`).join('');const a=document.getElementById('a');if(a&&!tries&&!fb)a.focus()}
+const TABS={home:['Смена',home],drill:['Упражнение',drill],rules:['Правила',rules],dict:['Словарь',dict],stats:['Итоги',stats]};
+function render(){document.getElementById('app').innerHTML=TABS[tab][1]();document.getElementById('nav').innerHTML=Object.entries(TABS).map(([k,v])=>`<button class="${tab===k?'on':''}" onclick="tab='${k}';${k==='drill'?'if(!Q.length)start();else ':''}render();scrollTo(0,0)">${v[0]}</button>`).join('');const a=document.getElementById('a');if(a&&!fb)a.focus()}
 render();if(AU)sync();document.addEventListener('visibilitychange',()=>{if(AU&&!document.hidden)sync()});
 try{if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js')}catch(e){}
 </script></body></html>
