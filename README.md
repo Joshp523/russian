@@ -1,110 +1,38 @@
-# ★ Глаголы
+<p align="center"><img src="icon-192.png" width="110" alt=""></p>
 
-Тренажёр глаголов движения русского языка: идти́ / ходи́ть, е́хать / е́здить, нести́ / носи́ть и их приставочные пары (прийти́ / приходи́ть, вы́йти / выходи́ть и т. д.).
+<h1 align="center">Russian Verbs (Глаголы)</h1>
+<p align="center"><em>Master Russian verbs of motion with sentences from the great Russian novels.</em></p>
+<p align="center"><a href="https://joshp523.github.io/russian/"><b>▶ Open the app</b></a></p>
 
-Упражнения построены на настоящих предложениях из русской классики — Пушкина, Лермонтова, Гоголя, Тургенева, Гончарова, Толстого, Достоевского, Чехова и других. Формы глаголов, ударения и переводы взяты из открытого словаря OpenRussian.
+<p align="center"><img src="readme-showcase.jpg" alt="Russian Verbs (Глаголы) on a phone"></p>
 
-Приложение работает в браузере, устанавливается на телефон как PWA и работает без интернета.
+Russian verbs of motion (*to go* on foot or by vehicle, once or regularly, *to carry*, *to lead*, and all their prefixes) are famously hard. This app drills them with real sentences from Pushkin, Gogol, Tolstoy, Dostoevsky, Chekhov and more: fill in the missing verb, then see the original line and its source.
 
-## Возможности
+## What you can do
 
-- **Смена** — ежедневная норма: повторения и новые карточки (5, 10, 15 или 25 в день).
-- **Упражнение** — предложение с пропуском. Подсказка показывает пару глаголов и нужную форму («прийти / приходить · прош., она»). Ответ проверяется без учёта ударения; е и ё считаются одной буквой.
-  - Если введена верная форма другого глагола пары, приложение подскажет, что автор выбрал иначе, и даст попробовать ещё раз.
-  - После ответа: полное предложение с ударением, источник, правило и перевод глагола.
-  - Неудачную карточку можно убрать.
-- **Перевод по нажатию** — нажмите на любое слово в цитате: начальная форма с ударением, часть речи, падеж и перевод на английский, плюс ссылка на Wiktionary.
-- **Правила** — 10 тем: однонаправленные и разнонаправленные глаголы, пешком или на транспорте, прошедшее время, приставки и предлоги, вид, повелительное наклонение, переносные значения, орфография. Каждый пример — дословная цитата из классики.
-- **Словарь** — 209 глаголов движения с полными таблицами спряжения и поиском.
-- **Итоги** — интервальное повторение (коробки: 0, 1, 3, 7, 16, 35 дней), серия дней, последние ошибки.
-- **Облако** — необязательная синхронизация между устройствами через Supabase (тот же вход, что в Daily Discipline).
+- **Daily shift:** a set number of review and new cards each day (5, 10, 15 or 25).
+- **Fill in the blank:** the hint shows the verb pair and the form needed. If you pick the other verb of the pair, it tells you the author chose differently and lets you try again.
+- **Tap any word** in a quote for its dictionary form, stress, grammar and English meaning.
+- **Rules:** 10 short lessons, each illustrated with quotes from the classics.
+- **Dictionary:** 209 verbs of motion with full conjugation tables.
+- **Progress:** spaced repetition, so the cards you miss come back sooner.
 
-## Содержание
+<table><tr><td align="center" valign="top"><img src="readme-screen-1.jpg" width="230" alt="Today's shift"><br><sub>Today's shift</sub></td><td align="center" valign="top"><img src="readme-screen-2.jpg" width="230" alt="An exercise"><br><sub>An exercise</sub></td><td align="center" valign="top"><img src="readme-screen-3.jpg" width="230" alt="The rules"><br><sub>The rules</sub></td></tr></table>
+## Why it's worth a look
 
-| | |
-|---|---|
-| Карточек из классики | 1 072 |
-| Карточек «Урок 1» | 21 |
-| Глаголов | 179 в упражнениях, 209 в словаре |
-| Произведений | 21 |
+- **Cool:** You learn Russian grammar from Tolstoy and Dostoevsky, not from a textbook robot.
+- **Innovative:** Over 1,000 practice cards were built from real literature, and every word is tap-to-translate.
+- **Impressive:** 209 verbs, 21 classic works, stress marks everywhere, and it works with no internet connection.
+- **Useful:** Ten minutes a day on the bus is enough. It remembers what you struggle with and brings it back at the right time.
 
-## Файлы
+<sub>Dictionary data from OpenRussian (CC BY-SA 4.0). Literary texts are in the public domain.</sub>
 
-| Файл | Назначение |
-|---|---|
-| `index.html` | Приложение целиком (интерфейс и логика) |
-| `data.js` | Карточки, глаголы, правила, цитаты |
-| `lex.js` | Словарь для перевода по нажатию (загружается при первом нажатии) |
-| `sw.js` | Service worker: работа без интернета |
-| `manifest.webmanifest`, `icon-*.png` | Установка на телефон |
-| `schema.sql` | Таблица для синхронизации в Supabase |
+---
 
-## Запуск
+### On your phone
+Open the link in Safari (iPhone/iPad) or Chrome (Android), then choose **Share → Add to Home Screen**. It gets its own icon and opens full-screen, just like an app from the store.
 
-Сборка не нужна — это статические файлы. Подойдёт любой хостинг, например GitHub Pages:
+### More apps by Josh Riley
+[The Riley Rag](https://joshp523.github.io/RileyRag/) · [QuipRash](https://joshp523.github.io/Quip-game-app/) · [Word Games](https://joshp523.github.io/Word-Games/) · [Riley Rangers](https://joshp523.github.io/Rangers-app/) · [Habits: Josh](https://joshp523.github.io/daily-discipline/) · [Habits: Meishe](https://joshp523.github.io/Habit-tracker-app-Meishe/) · [Habits: Grandma](https://joshp523.github.io/wendys-app/) · [Writing](https://joshp523.github.io/writing-app/)
 
-1. Загрузите файлы в репозиторий.
-2. Settings → Pages → Deploy from a branch → `main`, папка `/ (root)`.
-3. Откройте адрес сайта. На телефоне: «Поделиться» → «На экран „Домой“».
-
-Для проверки на своём компьютере:
-
-```sh
-python3 -m http.server
-```
-
-и откройте `http://localhost:8000`. Открывать `index.html` двойным щелчком тоже можно, но тогда не работает service worker.
-
-После обновления файлов увеличьте номер версии кэша в `sw.js` (`rus-v3` → `rus-v4`), чтобы телефоны получили новую версию.
-
-## Синхронизация (Supabase)
-
-Без облака всё хранится в браузере (`localStorage`). Для синхронизации:
-
-1. Supabase → SQL editor → выполните `schema.sql`. Скрипт затрагивает только таблицу `public.rus_snapshots` и безопасен при повторном запуске.
-2. Адрес проекта и публичный ключ задаются в `index.html` (константы `SB` и `KEY`).
-3. Войдите в приложении на вкладке «Итоги» → «Облако».
-
-Каждый пользователь видит только свою строку (row level security). Если появляется ошибка `42501`, не хватает прав — выполните:
-
-```sql
-grant select, insert, update, delete on public.rus_snapshots to authenticated;
-```
-
-## Источники и лицензии
-
-- **Словарь OpenRussian** — формы глаголов, ударения, видовые пары, английские переводы, данные для перевода по нажатию.
-  [github.com/Badestrand/russian-dictionary](https://github.com/Badestrand/russian-dictionary), [openrussian.org](https://openrussian.org) — лицензия **CC BY-SA 4.0**.
-- **Тексты классики** — из корпуса Бориса Орехова [nevmenandr/word2vec-russian-novels](https://github.com/nevmenandr/word2vec-russian-novels). Все использованные произведения находятся в общественном достоянии.
-
-Все примеры приводятся дословно; изменены только дефисы на тире. Ударения в ответах взяты из OpenRussian. Краткие объяснения правил написаны составителем.
-
-### Произведения
-
-| Автор | Произведение | Год |
-|---|---|---|
-| Д. И. Фонвизин | Недоросль | 1782 |
-| Н. М. Карамзин | Бедная Лиза | 1792 |
-| А. С. Пушкин | Повести Белкина | 1831 |
-| А. С. Пушкин | Капитанская дочка | 1836 |
-| Н. В. Гоголь | Нос | 1836 |
-| Н. В. Гоголь | Ревизор | 1836 |
-| М. Ю. Лермонтов | Герой нашего времени | 1840 |
-| Н. В. Гоголь | Шинель | 1842 |
-| И. С. Тургенев | Ася | 1858 |
-| С. Т. Аксаков | Аленький цветочек | 1858 |
-| И. А. Гончаров | Обломов | 1859 |
-| И. С. Тургенев | Первая любовь | 1860 |
-| И. С. Тургенев | Отцы и дети | 1862 |
-| Ф. М. Достоевский | Преступление и наказание | 1866 |
-| Л. Н. Толстой | Война и мир | 1869 |
-| Л. Н. Толстой | Анна Каренина | 1877 |
-| А. П. Чехов | Палата № 6 | 1892 |
-| М. Горький | Старуха Изергиль | 1895 |
-| А. П. Чехов | Чайка | 1896 |
-| А. П. Чехов | Три сестры | 1901 |
-| А. П. Чехов | Вишнёвый сад | 1904 |
-
-### Лицензия проекта
-
-Файлы `data.js` и `lex.js` содержат данные OpenRussian и поэтому распространяются на условиях **CC BY-SA 4.0**: при использовании указывайте источник и сохраняйте ту же лицензию.
+<sub>Built by Josh Riley. Setup notes for whoever maintains it are in [SETUP.md](SETUP.md).</sub>
