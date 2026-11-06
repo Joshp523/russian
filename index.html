@@ -23,6 +23,10 @@ details{border-top:1px solid #4a4b4d;padding:6px 0}summary{cursor:pointer;font-s
 span.w{cursor:pointer;border-radius:2px}span.w:active,span.w.sel{background:#b30f27;color:#fff}
 #sheet{position:fixed;left:0;right:0;bottom:calc(64px + env(safe-area-inset-bottom,0px));z-index:5;display:none}#sheet .k{max-width:488px;margin:0 auto 8px;border-color:#b30f27;max-height:50vh;overflow:auto}
 .x{float:right;background:none;border:0;color:#c4c3bc;font-size:22px;line-height:1;padding:0 4px}
+/* audio */
+.spk{display:inline-grid;place-items:center;width:34px;height:34px;vertical-align:middle;margin-left:6px;border:2px solid #1b1c1d;background:#4a4b4d;color:#e6b94f;padding:0;cursor:pointer;box-shadow:2px 2px 0 #1b1c1d}.spk:active{transform:translate(2px,2px);box-shadow:none}.spk svg{width:18px;height:18px}
+.spk.on{background:#b30f27;color:#fff}.say{cursor:pointer;border-bottom:1px dotted #8a8981}.say:active{color:#e6b94f}
+.rem .chip{min-width:64px}
 h4{font:500 13px Oswald,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#e6b94f;margin:14px 0 4px}
 </style></head><body><main id="app"></main><div id="sheet"></div><nav id="nav"></nav>
 <script src="data.js"></script>
@@ -90,29 +94,31 @@ function check(){const v=document.getElementById('a').value;if(!v.trim())return;
 function grade(c,g,v){const id=c.id,s=S.cards[id]||{b:0,f:today};
  if(!tries){const t=S.tg[c.tag]||[0,0];t[1]++;if(g===2)t[0]++;S.tg[c.tag]=t}
  s.b=g===2?Math.min(5,s.b+1):g===1?Math.max(1,s.b):0;s.due=addD(IV[s.b]);s.t=Date.now();S.cards[id]=s;S.days[today]=(S.days[today]||0)+1;
- if(g===0)Q.push(id);fb={g};msg='';save();render()}
+ if(g===0)Q.push(id);fb={g};msg='';save();render();if(S.set.au!==0)say(c.sent.replace('___',c.ans))}
 function next(){Q.shift();tries=0;fb=null;msg='';render()}
 function suspend(){S.sus[Q[0]]=Date.now();Q=Q.filter(i=>i!==Q[0]);tries=0;fb=null;msg='';save();render()}
 const st=a=>a.replace(/([аеёиоуыэюяАЕЁИОУЫЭЮЯ])́/g,'<b style="color:#e6b94f">$1́</b>');
 const hl=(s,w)=>{const e=esc(s),i=e.indexOf(w);return i<0?e:e.slice(0,i)+'<u>'+e.slice(i,i+w.length)+'</u>'+e.slice(i+w.length)};
 const tw=h=>h.replace(/[А-Яа-яЁё\u0301]+(?:-[А-Яа-яЁё\u0301]+)*/g,m=>`<span class="w">${m}</span>`);
-const quote=q=>`<div class="q"><div class="ru">«${tw(hl(q[0],q[2]))}»</div><div class="src">${esc(src(q[1]))}</div></div>`;
+const quote=q=>`<div class="q"><div class="ru">«${tw(hl(q[0],q[2]))}» ${spk(q[0])}</div><div class="src">${esc(src(q[1]))}</div></div>`;
 const setN=n=>{S.set.n=n;save();render()};const tgl=d=>{S.set.d[d]=S.set.d[d]?0:1;save();render()};
 function home(){const q=queue(),due=q.filter(i=>S.cards[i]).length,tg=Object.entries(S.tg).filter(([k,v])=>v[1]>=3).map(([k,v])=>[k,v[0]/v[1]]).sort((a,b)=>a[1]-b[1]).slice(0,4);
  const seen=Object.keys(S.cards).length,tot=ALLIDS.length;
  return`<div class="b o"><span>★ Глаголы</span><span>Серия ${streak()}</span></div><div class="k"><h3>Норма сегодня</h3><div style="display:flex;gap:28px"><div><div class="big">${due}</div><div class="m">повторений</div></div><div><div class="big">${q.length-due}</div><div class="m">новых</div></div></div><button class="btn" onclick="start()">${q.length?'Начать смену ★':'Норма выполнена'}</button><div class="m" style="margin-top:10px">Изучено ${seen} из ${tot} карточек</div><div class="t"><i style="width:${seen/tot*100}%"></i></div></div>
- <div class="k"><h3>Слабые места</h3>${tg.length?tg.map(([k,v])=>`<div class="m">${esc(k)} ${Math.round(v*100)}%</div><div class="t"><i style="width:${v*100}%"></i></div>`).join(''):'<div class="m">Данные появятся после первых смен.</div>'}</div>
+ ${remCard()}<div class="k"><h3>Слабые места</h3>${tg.length?tg.map(([k,v])=>`<div class="m">${esc(k)} ${Math.round(v*100)}%</div><div class="t"><i style="width:${v*100}%"></i></div>`).join(''):'<div class="m">Данные появятся после первых смен.</div>'}</div>
  <div class="k"><h3>Настройки</h3><div class="m">Новых карточек в день</div><div class="chips">${[5,10,15,25].map(n=>`<button class="chip ${S.set.n===n?'on':''}" onclick="setN(${n})">${n}</button>`).join('')}</div>
  <div class="m" style="margin-top:12px">Колоды</div><div class="chips">${[['l1','Урок 1'],['base','Без приставок'],['pref','С приставками']].map(([d,l])=>`<button class="chip ${S.set.d[d]?'on':''}" onclick="tgl('${d}')">${l}</button>`).join('')}</div>
+ ${TTS?`<div class="m" style="margin-top:12px">Озвучка после ответа</div><div class="chips"><button class="chip ${S.set.au!==0?'on':''}" onclick="S.set.au=1;save();render()">Авто</button><button class="chip ${S.set.au===0?'on':''}" onclick="S.set.au=0;save();render()">Только по кнопке</button></div>
+ <div class="m" style="margin-top:12px">Скорость речи</div><div class="chips">${[[.7,'Медленно'],[.9,'Обычно'],[1.05,'Быстро']].map(([r,l])=>`<button class="chip ${(S.set.rate||.9)===r?'on':''}" onclick="S.set.rate=${r};save();render();say('Я иду домой.')">${l}</button>`).join('')}</div>`:''}
  <div class="m" style="margin-top:10px">${C.length} карточек из русской классики · ${Object.keys(V).length} глаголов в словаре</div></div>`}
 function drill(){if(!Q.length)return`<div class="b o"><span>★ Смена окончена</span></div><div class="k"><h3>Готово</h3><div class="m">Сделано ${TOT} карточек. Возвращайтесь завтра.</div><button class="btn" onclick="tab='home';render()">На главную</button></div>`;
  const c=card(Q[0]);
- const full=tw(esc(c.sent)).replace('___','<u><span class="w">'+st(c.ans)+'</span></u>');
- const body=fb?`<div class="k"><h3 class="${fb.g?'ok':'bad'}">${fb.g===2?'Верно':fb.g===1?'Верно со второго раза':'Неверно'}</h3><div class="ru">${full}</div>${c.src!=null?`<div class="src">— ${esc(src(c.src))}</div>`:''}<div style="margin-top:10px">${st(esc(c.rule))}</div>${c.gloss?`<div class="gl" style="margin-top:6px">OpenRussian: “${esc(c.gloss)}”</div>`:''}<button class="btn" onclick="next()">Дальше</button>${c.src!=null?'<button class="lnk" onclick="suspend()">Убрать эту карточку</button>':''}</div>`
+ const full=tw(esc(c.sent)).replace('___','<u><span class="w">'+st(c.ans)+'</span></u>'),said=c.sent.replace('___',c.ans);
+ const body=fb?`<div class="k"><h3 class="${fb.g?'ok':'bad'}">${fb.g===2?'Верно':fb.g===1?'Верно со второго раза':'Неверно'}</h3><div class="ru">${full} ${spk(said)}</div>${c.src!=null?`<div class="src">— ${esc(src(c.src))}</div>`:''}<div style="margin-top:10px">${st(esc(c.rule))}</div>${c.gloss?`<div class="gl" style="margin-top:6px">OpenRussian: “${esc(c.gloss)}”</div>`:''}<button class="btn" onclick="next()">Дальше</button>${c.src!=null?'<button class="lnk" onclick="suspend()">Убрать эту карточку</button>':''}</div>`
  :`<div class="k"><h3>${esc(c.hint)}</h3><div class="ru">${tw(esc(c.sent)).replace('___','<b style="color:#e6b94f">___</b>')}</div>${c.src!=null?`<div class="src">— ${esc(src(c.src))}</div>`:''}<input id="a" autocapitalize="off" autocorrect="off" spellcheck="false" lang="ru" autocomplete="off" aria-label="Ответ" onkeydown="if(event.key==='Enter')check()"><div class="bad" style="margin-top:6px">${esc(msg)}</div><div class="m">Ударение не нужно · е = ё · нажмите на слово — перевод</div><button class="btn" onclick="check()">Проверить</button></div>`;
  return`<div class="b o"><span>★ Упражнение</span><span>Осталось ${Q.length}</span></div>${body}`}
 function rules(){return`<div class="b o"><span>★ Правила</span><span>${R.length} тем</span></div>`+R.map(r=>`<div class="k"><h3>${esc(r.h)}</h3>${(r.p||[]).map(p=>`<div style="margin-bottom:6px">${st(esc(p))}</div>`).join('')}
- ${r.pairs?`<table>${B.map(b=>`<tr><td>${st(ac(V[b[0]][6][0]))} / ${st(ac(V[b[1]][6][0]))}</td><td class="m">${esc(b[2])}<br>“${esc(V[b[0]][4])}”</td></tr>`).join('')}</table>`:''}
+ ${r.pairs?`<table>${B.map(b=>`<tr><td>${sayW(ac(V[b[0]][6][0]))} / ${sayW(ac(V[b[1]][6][0]))}</td><td class="m">${esc(b[2])}<br>“${esc(V[b[0]][4])}”</td></tr>`).join('')}</table>`:''}
  ${r.pref?r.pref.map(p=>`<h4>${esc(p[0])} · ${esc(p[1])} · ${esc(p[2])}</h4>${quote(p[3])}`).join(''):''}
  ${(r.ex||[]).map(quote).join('')}</div>`).join('')
  +`<div class="k" style="border-color:#b30f27"><h3>Из книги</h3>${quote(FIRST)}</div>`
@@ -120,8 +126,8 @@ function rules(){return`<div class="b o"><span>★ Правила</span><span>${
  <div class="m">• Формы глаголов, ударения, видовые пары, переводы: <a style="color:#e6b94f" href="https://github.com/Badestrand/russian-dictionary">OpenRussian dictionary data</a> (openrussian.org), CC BY-SA 4.0.</div>
  <div class="m">• Тексты: <a style="color:#e6b94f" href="https://github.com/nevmenandr/word2vec-russian-novels">nevmenandr/word2vec-russian-novels</a> (Б. Орехов); произведения в общественном достоянии:</div>
  <div class="m" style="margin-top:6px">${W.map(w=>`${esc(w[0])}, «${esc(w[1])}» (${w[2]}) — ${C.filter(c=>W[c[5]]===w).length} карт.`).join('<br>')}</div></div>`}
-function vtable(v){const m=V[v],f=m[6].map(ac),c=C.filter(x=>x[1]===v).length;
- return`<div class="gl">${m[2]==='p'?'сов.':'несов.'}${m[3]&&m[3]!=='-'?' · пара: '+esc(m[3].replace(/[,;]/g,', ')):''} · ${c} карт.</div><div class="gl">OpenRussian: “${esc(m[4])}”</div>
+function vtable(v){const m=V[v],f=m[6].map(ac),c=C.filter(x=>x[1]===v).length,st=x=>sayW(x||'');
+ return`<div style="margin:6px 0">${spk(f[0])} <span class="gl">нажмите на форму, чтобы услышать</span></div><div class="gl">${m[2]==='p'?'сов.':'несов.'}${m[3]&&m[3]!=='-'?' · пара: '+esc(m[3].replace(/[,;]/g,', ')):''} · ${c} карт.</div><div class="gl">OpenRussian: “${esc(m[4])}”</div>
  <table><tr><td class="m">я</td><td>${st(f[7])}</td><td class="m">мы</td><td>${st(f[10])}</td></tr><tr><td class="m">ты</td><td>${st(f[8])}</td><td class="m">вы</td><td>${st(f[11])}</td></tr><tr><td class="m">он</td><td>${st(f[9])}</td><td class="m">они</td><td>${st(f[12])}</td></tr>
  <tr><td class="m">прош.</td><td colspan="3">${[3,4,5,6].map(i=>st(f[i])).join(', ')}</td></tr><tr><td class="m">повел.</td><td colspan="3">${st(f[1])}, ${st(f[2])}</td></tr></table>`}
 function dict(){
@@ -132,6 +138,17 @@ function stats(){const bx=[0,1,2,3,4,5].map(i=>Object.values(S.cards).filter(c=>
  return`<div class="b o"><span>★ Итоги</span><span>Серия ${streak()}</span></div><div class="k"><h3>Коробки (0 · 1д · 3д · 7д · 16д · 35д)</h3><div style="display:flex;gap:6px;align-items:flex-end;height:90px">${bx.map(v=>`<div style="flex:1;background:#b30f27;height:${v/mx*90+3}px" title="${v}"></div>`).join('')}</div><div class="m" style="display:flex;justify-content:space-around;margin-top:4px">${bx.map(v=>`<span>${v}</span>`).join('')}</div></div>
  <div class="k"><h3>Ошибки (последние)</h3>${S.log.slice(-8).reverse().map(x=>{const c=card(x.id);return c?`<div class="m">${esc(x.a)} → <span class="ok">${st(c.ans)}</span> · ${esc(c.hint)}</div>`:''}).join('')||'<div class="m">Пока пусто.</div>'}</div>
  ${ns?`<div class="k"><h3>Убранные карточки</h3><div class="m">${ns} шт.</div><button class="btn g" onclick="S.sus={};save();render()">Вернуть все</button></div>`:''}${cloud()}`}
+/* AUDIO: the phone's own Russian voice reads sentences and words aloud */
+const TTS='speechSynthesis' in window;let VO=null;
+const pickV=()=>{const vs=speechSynthesis.getVoices().filter(v=>/^ru/i.test(v.lang));VO=vs.find(v=>/premium|enhanced|улучш/i.test(v.name))||vs.find(v=>/Milena|Google|Yuri|Katya/i.test(v.name))||vs[0]||null};
+if(TTS){pickV();speechSynthesis.addEventListener&&speechSynthesis.addEventListener('voiceschanged',pickV)}
+let spOn=null;function say(t,btn){if(!TTS)return;speechSynthesis.cancel();if(spOn)spOn.classList.remove('on');
+ const u=new SpeechSynthesisUtterance(String(t).replace(/\u0301/g,'').replace(/_{2,}/g,'…'));u.lang='ru-RU';try{if(VO)u.voice=VO}catch(e){}u.rate=S.set.rate||.9;
+ if(btn){spOn=btn;btn.classList.add('on');u.onend=u.onerror=()=>btn.classList.remove('on')}speechSynthesis.speak(u)}
+const SPK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z" fill="currentColor"/><path d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>';
+const spk=t=>TTS?`<button class="spk" data-t="${esc(t)}" aria-label="Слушать">${SPK}</button>`:'';
+const sayW=t=>TTS?`<span class="say" data-t="${esc(t)}">${st(esc(t))}</span>`:st(esc(t));
+document.addEventListener('click',e=>{const b=e.target.closest('.spk,.say');if(b){e.stopPropagation();say(b.dataset.t,b.classList.contains('spk')?b:null)}},true);
 /* Tap-to-translate: lex.js (OpenRussian glosses) loads on first tap */
 let lexP=null;const lex=()=>lexP||(lexP=new Promise((ok,no)=>{const sc=document.createElement('script');sc.src='lex.js';sc.onload=ok;sc.onerror=()=>{lexP=null;no()};document.head.appendChild(sc)}));
 let selW=null;const closeW=()=>{document.getElementById('sheet').style.display='none';if(selW)selW.classList.remove('sel');selW=null};
@@ -139,7 +156,7 @@ async function showW(el){if(selW)selW.classList.remove('sel');selW=el;el.classLi
  sh.innerHTML='<div class="k"><div class="m">…</div></div>';sh.style.display='block';
  let E=[];try{await lex();E=LEX[k]||[]}catch(e){}
  const wl=w=>'https://en.wiktionary.org/wiki/'+encodeURIComponent(w.replace(/\u0301/g,'').toLowerCase());
- sh.innerHTML=`<div class="k"><button class="x" onclick="closeW()" aria-label="Закрыть">×</button><h3>${esc(raw)}</h3>${E.length?E.map(e=>`<div style="margin-top:8px"><b>${st(esc(e[0]))}</b> <span class="gl">${esc(e[1])}</span><div>${esc(e[2])}</div></div>`).join(''):'<div class="m">Нет в словаре OpenRussian (часто это причастие, деепричастие или имя).</div>'}
+ sh.innerHTML=`<div class="k"><button class="x" onclick="closeW()" aria-label="Закрыть">×</button><h3>${esc(raw)} ${spk(raw)}</h3>${E.length?E.map(e=>`<div style="margin-top:8px"><b>${sayW(e[0])}</b> <span class="gl">${esc(e[1])}</span><div>${esc(e[2])}</div></div>`).join(''):'<div class="m">Нет в словаре OpenRussian (часто это причастие, деепричастие или имя).</div>'}
  <div class="m" style="margin-top:10px"><a style="color:#e6b94f" target="_blank" rel="noopener" href="${wl(E[0]?E[0][0]:raw)}">Wiktionary →</a> · OpenRussian, CC BY-SA 4.0</div></div>`}
 document.addEventListener('click',e=>{const w=e.target.closest('span.w');if(w){showW(w);return}if(!e.target.closest('#sheet'))closeW()});
 /* Supabase (shares login with Daily Discipline; own table rus_snapshots, own storage keys) */
@@ -159,6 +176,25 @@ async function sync(){if(!AU)return;try{const r=await sb('rus_snapshots?select=d
 async function signIn(){try{await auth({email:document.getElementById('em').value.trim(),password:document.getElementById('pw').value},'password');await sync();render()}catch(e){SYT=e.message;render()}}
 const signOut=()=>{AU=null;saveAU();SYT='Не в сети';render()};
 const cloud=()=>AU?`<div class="k"><h3>Облако</h3><div class="m">${esc(AU.em)}</div><div class="m">${esc(SYT)}</div><button class="btn" onclick="sync()">Синхронизировать</button><button class="btn g" onclick="signOut()">Выйти</button></div>`:`<div class="k"><h3>Облако</h3><div class="m">Тот же email и пароль, что в Daily Discipline.</div><input id="em" type="email" autocomplete="username" placeholder="Email"><input id="pw" type="password" autocomplete="current-password" placeholder="Пароль"><button class="btn" onclick="signIn()">Войти</button><div class="m" style="margin-top:6px">${esc(SYT)}</div></div>`;
+/* DAILY REMINDER: push once a day at a chosen hour (sent by the rus-daily function on Supabase) */
+const VAPID='BFw7hA53iH9H9zRBVQL5qh8s6KedW8StMUkoXKnJMm80czUrsh043-mYqa5tL4mFZaT6kpvHUezoIJ3Wtx52TJk';
+const CAN_PUSH=()=>'serviceWorker' in navigator&&'PushManager' in window&&'Notification' in window;
+const STANDALONE=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+const IOS=/iPhone|iPad|iPod/.test(navigator.userAgent)||(/Macintosh/.test(navigator.userAgent)&&navigator.maxTouchPoints>1);
+let REM=S.rem??null,REMT='';
+async function remSet(h){REMT='…';render();try{
+ const reg=await navigator.serviceWorker.register('sw.js');await navigator.serviceWorker.ready;
+ if(h===null){const s=await reg.pushManager.getSubscription();if(s){await sb('rus_push?endpoint=eq.'+encodeURIComponent(s.endpoint),{method:'DELETE'});await s.unsubscribe()}REM=null;REMT='Напоминания выключены.'}
+ else{if(await Notification.requestPermission()!=='granted'){REMT='Телефон не разрешил уведомления. Включите их: Настройки → Уведомления → Глаголы.';return render()}
+  let s=await reg.pushManager.getSubscription();if(!s){const u=VAPID.replace(/-/g,'+').replace(/_/g,'/'),raw=atob(u+'='.repeat((4-u.length%4)%4));s=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:Uint8Array.from(raw,c=>c.charCodeAt(0))})}
+  await sb('rus_push?on_conflict=endpoint',{method:'POST',headers:{Prefer:'resolution=merge-duplicates,return=minimal'},body:JSON.stringify({endpoint:s.endpoint,user_id:AU.uid,sub:s.toJSON(),hour:h,tz:Intl.DateTimeFormat().resolvedOptions().timeZone||'UTC'})});
+  REM=h;REMT=`Каждый день в ${h}:00, если смена ещё не сделана.`}
+ S.rem=REM;persist()}catch(e){REMT='Ошибка: '+e.message.slice(0,160)}render()}
+function remCard(){let b;
+ if(!AU)b='<div class="m">Войдите в облако (вкладка «Итоги»), и телефон будет напоминать о смене раз в день.</div>';
+ else if(!CAN_PUSH())b=IOS&&!STANDALONE()?'<div class="m">Сначала добавьте приложение на экран «Домой»: Поделиться → На экран «Домой». Потом откройте его оттуда.</div>':'<div class="m">Этот браузер не умеет присылать уведомления.</div>';
+ else b=`<div class="m">${REM==null?'Раз в день, в выбранный час. Если смена уже сделана, телефон промолчит.':'Каждый день в '+REM+':00, если смена ещё не сделана.'}</div><div class="chips">${[8,12,18,21].map(h=>`<button class="chip ${REM===h?'on':''}" onclick="remSet(${h})">${h}:00</button>`).join('')}${REM!=null?'<button class="chip" onclick="remSet(null)">Выкл.</button>':''}</div>${REMT?`<div class="m" style="margin-top:8px">${esc(REMT)}</div>`:''}`;
+ return`<div class="k rem"><h3>Напоминание</h3>${b}</div>`}
 const TABS={home:['Смена',home],drill:['Упражнение',drill],rules:['Правила',rules],dict:['Словарь',dict],stats:['Итоги',stats]};
 function render(){closeW();document.getElementById('app').innerHTML=TABS[tab][1]();document.getElementById('nav').innerHTML=Object.entries(TABS).map(([k,v])=>`<button class="${tab===k?'on':''}" onclick="tab='${k}';${k==='drill'?'if(!Q.length)start();else ':''}render();scrollTo(0,0)">${v[0]}</button>`).join('');const a=document.getElementById('a');if(a&&!fb)a.focus()}
 render();if(AU)sync();document.addEventListener('visibilitychange',()=>{if(AU&&!document.hidden)sync()});
