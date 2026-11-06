@@ -1,0 +1,7 @@
+Upload to the "russian" repo on GitHub (Add file → Upload files):
+  index.html, sw.js, asp.js   (replace the old index.html and sw.js)
+  the whole "books" folder    (drag the folder itself onto the upload page so it lands as books/...)
+Commit. No Supabase changes are needed.
+
+Then open the app once with internet (from the home-screen icon) and tap Книги.
+When the header says "✓ Офлайн", the books, dictionary and voice all work on a plane.
