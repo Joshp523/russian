@@ -1,31 +1,37 @@
 <p align="center"><img src="icon-192.png" width="110" alt=""></p>
 
-<h1 align="center">Russian Verbs (Глаголы)</h1>
-<p align="center"><em>Master Russian verbs of motion with sentences from the great Russian novels.</em></p>
+<h1 align="center">Глаголы</h1>
+<h3 align="center">Russian verbs, finally conquered. And now, the Bible in your pocket.</h3>
 <p align="center"><a href="https://joshp523.github.io/russian/"><b>▶ Open the app</b></a></p>
 
-<p align="center"><img src="readme-showcase.jpg" alt="Russian Verbs (Глаголы) on a phone"></p>
+<table><tr>
+<td align="center"><img src="readme-home.jpg" width="180"><br><sub><b>Daily shift</b></sub></td>
+<td align="center"><img src="readme-library.jpg" width="180"><br><sub><b>The library</b></sub></td>
+<td align="center"><img src="readme-toc.jpg" width="180"><br><sub><b>Any book, any chapter</b></sub></td>
+<td align="center"><img src="readme-tap.jpg" width="180"><br><sub><b>Tap any word</b></sub></td>
+<td align="center"><img src="readme-dict.jpg" width="180"><br><sub><b>Verb dictionary</b></sub></td>
+</tr></table>
 
-Russian verbs of motion (*to go* on foot or by vehicle, once or regularly, *to carry*, *to lead*, and all their prefixes) are famously hard. This app drills them with real sentences from Pushkin, Gogol, Tolstoy, Dostoevsky, Chekhov and more: fill in the missing verb, then see the original line and its source.
+## ✦ New: the Russian Bible
+**All 66 books of the Synodal Translation.** The classic 1876 text, faithful and public domain, laid out as a calm, beautiful book.
 
-## What you can do
+**Tap any word.** Its meaning, its grammar and its stress appear instantly, and your phone says it aloud. Tap again to hear the whole sentence.
 
-- **Daily shift:** a set number of review and new cards each day (5, 10, 15 or 25).
-- **Fill in the blank:** the hint shows the verb pair and the form needed. If you pick the other verb of the pair, it tells you the author chose differently and lets you try again.
-- **Tap any word** in a quote for its dictionary form, stress, grammar and English meaning.
-- **Rules:** 10 short lessons, each illustrated with quotes from the classics.
-- **Dictionary:** 209 verbs of motion with full conjugation tables.
-- **Progress:** spaced repetition, so the cards you miss come back sooner.
+**Even the old words.** *Дщерь, вопиять, сей, дабы, Израилев.* A hand-made glossary covers the archaic Synodal vocabulary and over a hundred biblical names.
 
-<table><tr><td align="center" valign="top"><img src="readme-screen-1.jpg" width="230" alt="Today's shift"><br><sub>Today's shift</sub></td><td align="center" valign="top"><img src="readme-screen-2.jpg" width="230" alt="An exercise"><br><sub>An exercise</sub></td><td align="center" valign="top"><img src="readme-screen-3.jpg" width="230" alt="The rules"><br><sub>The rules</sub></td></tr></table>
-## Why it's worth a look
+**Jump anywhere.** Open the contents, pick a book, tap a chapter. Verse numbers sit quietly in the margin.
 
-- **Cool:** You learn Russian grammar from Tolstoy and Dostoevsky, not from a textbook robot.
-- **Innovative:** Over 1,000 practice cards were built from real literature, and every word is tap-to-translate.
-- **Impressive:** 209 verbs, 21 classic works, stress marks everywhere, and it works with no internet connection.
-- **Useful:** Ten minutes a day on the bus is enough. It remembers what you struggle with and brings it back at the right time.
+**Completely offline.** Text, dictionary and voice all live on your phone. Read on a plane, in a monastery, in a tunnel.
 
-<sub>Dictionary data from OpenRussian (CC BY-SA 4.0). Literary texts are in the public domain.</sub>
+## ✦ The verb trainer
+**Verbs of motion, tamed.** Daily shifts of spaced-repetition cards with real sentences from Tolstoy, Dostoevsky, Chekhov and more.
+
+**Weak spots, found.** The app learns where you stumble and brings those verbs back.
+
+**A full verb dictionary.** Every form, every stress, every aspect pair.
+
+## ✦ The library
+The Bible, plus Tolstoy, Chekhov and *The Brothers Karamazov.* All with tap-to-translate, your place saved automatically, and nothing to distract you.
 
 ---
 

@@ -40,7 +40,18 @@ nav{z-index:6;transition:transform .25s}nav button{font-size:min(10.5px,2.8vw);l
 body.reading #rd{visibility:visible;pointer-events:auto}body.reading main{display:none}
 body.reading::after{content:"";position:fixed;top:0;left:0;right:0;height:env(safe-area-inset-top,0px);background:#1b1c1d;z-index:7}
 body.reading.navh nav{transform:translateY(105%)}
-#rd p{margin:0;text-indent:1.4em;hyphens:auto;-webkit-hyphens:auto;text-align:justify}#rd p+p{margin-top:.35em}
+#rd p{margin:0;text-indent:1.4em;hyphens:auto;-webkit-hyphens:auto;text-align:justify}
+#rd.vns p{text-indent:0;margin:0 0 .35em}#rd .vn{font:600 .62em/1 Oswald,sans-serif;color:var(--acc);vertical-align:.45em;margin-right:.3em;user-select:none}
+a.toc{color:#e6b94f;text-decoration:underline;cursor:pointer}
+#btoc{position:fixed;inset:0;z-index:30;display:none;background:rgba(0,0,0,.55);overflow:auto;-webkit-overflow-scrolling:touch}
+#btoc .tw{max-width:520px;margin:max(14px,env(safe-area-inset-top)) auto 90px;background:#2b2c2e;color:#eeebe3;border:3px solid #1b1c1d;box-shadow:6px 6px 0 #1b1c1d;padding:6px 14px 14px;font-family:Oswald,sans-serif}
+#btoc .th{display:flex;align-items:center;justify-content:space-between;padding:10px 0;position:sticky;top:0;background:inherit}
+#btoc .tx{background:none;border:1px solid currentColor;color:inherit;font:inherit;padding:4px 10px;cursor:pointer}
+#btoc details{border-top:1px solid rgba(255,255,255,.12)}#btoc summary{padding:12px 2px;cursor:pointer;display:flex;gap:8px;align-items:baseline}
+#btoc summary small{margin-left:auto;opacity:.55}#btoc .here{color:#e6b94f;font-size:.85em}
+#btoc .cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(44px,1fr));gap:6px;padding:4px 0 14px}
+#btoc .cg button{font:500 15px Oswald,sans-serif;padding:9px 0;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);color:inherit;cursor:pointer}
+#btoc .cg button.on{background:#b30f27;border-color:#b30f27;color:#fff}#rd p+p{margin-top:.35em}
 #rd p.v{text-indent:0;font-style:italic;text-align:left;padding-left:1.4em}
 #rd section{content-visibility:auto;contain-intrinsic-size:auto 2400px;padding-bottom:1.6em}
 #rd .kk{font:500 12px/1.4 Oswald,sans-serif;letter-spacing:.14em;text-transform:uppercase;color:var(--acc);text-align:center;margin:2.2em 0 .4em}
@@ -58,7 +69,7 @@ body.reading #rbar{display:block}
 @media (prefers-color-scheme:dark){#rd{--pa:#151514;--ink:#d8d2c4;--mu:#8b857a;--acc:#e0566a}#rbar{background:rgba(255,255,255,.08)}}
 @media (min-width:700px){#rd{font-size:22px;padding-top:calc(env(safe-area-inset-top,0px) + 60px)}}
 h4{font:500 13px Oswald,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#e6b94f;margin:14px 0 4px}
-</style></head><body><main id="app"></main><div id="rd" lang="ru"></div><div id="hl"></div><div id="rpop"></div><div id="rbar"><i></i></div><div id="sheet"></div><nav id="nav"></nav>
+</style></head><body><main id="app"></main><div id="rd" lang="ru"></div><div id="hl"></div><div id="rpop"></div><div id="rbar"><i></i></div><div id="sheet"></div><div id="btoc"></div><nav id="nav"></nav>
 <script src="data.js"></script><script src="asp.js"></script>
 <script>
 const IV=[0,1,3,7,16,35],K='rus1';
@@ -228,32 +239,42 @@ function remCard(){let b;
  else b=`<div class="m">${REM==null?'Раз в день, в выбранный час. Если смена уже сделана, телефон промолчит.':'Каждый день в '+REM+':00, если смена ещё не сделана.'}</div><div class="chips">${[8,12,18,21].map(h=>`<button class="chip ${REM===h?'on':''}" onclick="remSet(${h})">${h}:00</button>`).join('')}${REM!=null?'<button class="chip" onclick="remSet(null)">Выкл.</button>':''}</div>${REMT?`<div class="m" style="margin-top:8px">${esc(REMT)}</div>`:''}`;
  return`<div class="k rem"><h3>Напоминание</h3>${b}</div>`}
 /* BOOKS: distraction-free reader. Texts and the word list (books/*.json) are stored on the phone by the service worker, so reading, translations and the phone's voice all work offline. */
-const BOOKS=[['uchenie','Учение Христа, изложенное для детей','Л. Н. Толстой',1908],['dama','Дама с собачкой','А. П. Чехов',1899],['karamazov','Братья Карамазовы','Ф. М. Достоевский',1880]];
+const BOOKS=[['bible-nt','Библия. Новый Завет','Синодальный перевод',1876],['bible-ot','Библия. Ветхий Завет','Синодальный перевод',1876],['uchenie','Учение Христа, изложенное для детей','Л. Н. Толстой',1908],['dama','Дама с собачкой','А. П. Чехов',1899],['karamazov','Братья Карамазовы','Ф. М. Достоевский',1880]];
 const BF=['books/dict.json'].concat(BOOKS.map(b=>'books/'+b[0]+'.json')),$=i=>document.getElementById(i);
 S.rd=S.rd||{};let LIB=!S.rb,RB=null,BK=null,DICT=null,dictP=null,OFF=null,SELR=null,rsT=0,rdT=0,lastY=0,grabbing=false;
 const getJ=u=>fetch(u).then(r=>{if(!r.ok)throw new Error(r.status);return r.json()});
 const dictL=()=>dictP||(dictP=getJ('books/dict.json').then(d=>DICT=d).catch(e=>{dictP=null;throw e}));
-async function offState(){try{const c=await caches.open('rusbooks-1'),r=await Promise.all(BF.map(u=>c.match(u)));OFF=r.every(Boolean)?2:r.some(Boolean)?1:0}catch(e){OFF=null}return OFF}
+async function offState(){try{const c=await caches.open('rusbooks-2'),r=await Promise.all(BF.map(u=>c.match(u)));OFF=r.every(Boolean)?2:r.some(Boolean)?1:0}catch(e){OFF=null}return OFF}
 async function grab(){if(grabbing)return;grabbing=true;const was=OFF;await offState();
  if(OFF!==2&&navigator.onLine!==false){OFF=1;await Promise.all(BF.map(u=>fetch(u).then(r=>r.ok&&r.arrayBuffer()).catch(()=>{})));await offState()}
  grabbing=false;if(tab==='books'&&LIB&&OFF!==was)render()}
 try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
 function goBooks(){if(tab==='books')LIB=S.rb?!LIB:true;else LIB=!S.rb;tab='books';render();scrollTo(0,0)}
 function openBook(id){S.rb=id;LIB=false;persist();render()}
+/* Contents for the Bible: pick a book, then a chapter, and the reader opens right there. */
+let TOCB=null;
+async function tocOpen(id,open){const el=$('btoc');el.style.display='block';el.innerHTML='<div class="tw"><div class="rdl">…</div></div>';document.body.classList.add('tocon');
+ let b;try{b=await getJ('books/'+id+'.json')}catch(e){el.innerHTML='<div class="tw"><div class="rdl">Нужен интернет, чтобы загрузить книгу в первый раз.</div><button class="tx" onclick="tocClose()">Закрыть</button></div>';return}
+ TOCB={id,toc:b.toc};const r=S.rd[id],cur=r?r.c:-1;
+ el.innerHTML=`<div class="tw"><div class="th"><b>${esc(b.t)}</b><button class="tx" onclick="tocClose()" aria-label="Закрыть">✕</button></div>`+b.toc.map(([n,c0,k],i)=>{const here=cur>=c0&&cur<c0+k;
+  return`<details${(open===i||(open==null&&here))?' open':''}><summary>${esc(n)}${here?' <span class="here">• здесь</span>':''}<small>${k}</small></summary><div class="cg">${Array.from({length:k},(_,j)=>`<button class="${cur===c0+j?'on':''}" onclick="tocGo(${c0+j})">${j+1}</button>`).join('')}</div></details>`}).join('')+'</div>';
+ const o=el.querySelector('details[open]');if(o)o.scrollIntoView({block:'center'})}
+function tocClose(){$('btoc').style.display='none';document.body.classList.remove('tocon')}
+function tocGo(c){const id=TOCB.id;S.rd[id]={...(S.rd[id]||{}),c,p:0,f:0,t:Date.now()};tocClose();const same=RB===id;openBook(id);if(same)requestAnimationFrame(restore)}
 function books(){if(OFF==null||OFF<2)setTimeout(grab,300);
  return`<div class="b o"><span>★ Книги</span><span>${OFF===2?'✓ Офлайн':''}</span></div>`+BOOKS.map(([id,t,a,y])=>{const r=S.rd[id],p=r?r.pc||0:0;
-  return`<div class="k bkc" onclick="openBook('${id}')"><h3>${esc(a)} · ${y}</h3><div class="bt">${esc(t)}</div><div class="t"><i style="width:${p*100}%"></i></div><div class="m">${r?(p>=.999?'Прочитано':Math.floor(p*100)+'% прочитано'):'Не начата'}${S.rb===id?' · читаю сейчас':''}</div></div>`}).join('')
+  return`<div class="k bkc" onclick="openBook('${id}')"><h3>${esc(a)} · ${y}</h3><div class="bt">${esc(t)}</div><div class="t"><i style="width:${p*100}%"></i></div><div class="m">${r?(p>=.999?'Прочитано':Math.floor(p*100)+'% прочитано'):'Не начата'}${S.rb===id?' · читаю сейчас':''}${id.startsWith('bible')?` · <a class="toc" onclick="event.stopPropagation();tocOpen('${id}')">Содержание ›</a>`:''}</div></div>`}).join('')
  +`<div class="k"><h3>Как читать</h3><div class="m">Нажмите на слово — перевод и произношение. Ещё раз на то же слово — прозвучит вся фраза. Потяните текст вниз — появится меню; кнопка «Книги» вернёт сюда. Место в книге сохраняется само.</div>
  <div class="m" style="margin-top:8px">${OFF===2?'✓ Книги, словарь и голос работают без интернета — можно читать в самолёте.':OFF===1?'Сохраняю книги и словарь на телефон…':OFF===0?'Книги ещё не сохранены на телефон: откройте эту вкладку при интернете.':''}</div></div>
- <div class="k"><h3>Источники</h3><div class="m">Тексты в общественном достоянии. Толстой — ПСС, т. 37 (1956), по изданию Tolstoy Digital (github.com/tolstoydigital/TEI). Чехов, Достоевский — github.com/d0rj/RusLit. Перевод слов: OpenRussian (CC BY-SA 4.0); формы слов: pymorphy3.</div></div>`}
+ <div class="k"><h3>Источники</h3><div class="m">Тексты в общественном достоянии. Толстой — ПСС, т. 37 (1956), по изданию Tolstoy Digital (github.com/tolstoydigital/TEI). Чехов, Достоевский — github.com/d0rj/RusLit. Библия — Синодальный перевод (1876), по изданию eBible.org (russyn). Перевод слов: OpenRussian (CC BY-SA 4.0); формы слов: pymorphy3.</div></div>`}
 function readMode(){const on=tab==='books'&&!LIB&&!!S.rb;document.body.classList.toggle('reading',on);if(!on){closeR();document.body.classList.remove('navh');return}
  if(RB!==S.rb)loadBook(S.rb);dictL().catch(()=>{})}
 async function loadBook(id){const rd=$('rd');RB=id;BK=null;rd.innerHTML='<div class="rdl">…</div>';let b;
  try{b=await getJ('books/'+id+'.json')}catch(e){rd.innerHTML='<div class="rdl">Книга не загрузилась. В первый раз нужен интернет.</div>';RB=null;return}
  if(RB!==id)return;let o=0,pk='',h=`<header class="rdh"><div>${esc(b.a)}</div><h1>${esc(b.t)}</h1></header>`;
  b.ch.forEach((c,i)=>{h+=`<section data-c="${i}">`;if(c[0]&&c[0]!==pk)h+=`<div class="kk">${esc(c[0])}</div>`;pk=c[0]||pk;if(c[1])h+=`<h2>${esc(c[1])}</h2>`;
-  c[2].forEach((p,j)=>{const v=p[0]==='~',t=v?p.slice(1):p;h+=`<p data-c="${i}" data-p="${j}" data-o="${o}"${v?' class="v"':''}>${esc(t).replace(/\[(\d+)\]/g,(m,n)=>b.n&&b.n[n]?`<sup class="fn" data-n="${n}">${n}</sup>`:m)}</p>`;o+=t.length});h+='</section>'});
- BK=b;BK.len=o;rd.innerHTML=h+'<div class="fin">❧</div>';requestAnimationFrame(restore)}
+  c[2].forEach((p,j)=>{const v=p[0]==='~',t=v?p.slice(1):p;let x=esc(t).replace(/\[(\d+)\]/g,(m,n)=>b.n&&b.n[n]?`<sup class="fn" data-n="${n}">${n}</sup>`:m);if(b.vn)x=x.replace(/^(\d+) /,'<span class="vn">$1</span>');h+=`<p data-c="${i}" data-p="${j}" data-o="${o}"${v?' class="v"':''}>${x}</p>`;o+=t.length});h+='</section>'});
+ BK=b;BK.len=o;rd.classList.toggle('vns',!!b.vn);rd.innerHTML=h+'<div class="fin">❧</div>';requestAnimationFrame(restore)}
 function restore(){const r=S.rd[RB],rd=$('rd');rd.scrollTop=0;if(r){const el=rd.querySelector(`p[data-c="${r.c}"][data-p="${r.p}"]`);if(el){el.scrollIntoView({block:'start'});rd.scrollTop+=Math.round((r.f||0)*el.offsetHeight)}}lastY=rd.scrollTop;setTimeout(()=>updBar(1),60)}
 function updBar(quiet){if(!BK||!document.body.classList.contains('reading'))return;const rd=$('rd');let el=null;
  for(const y of [6,40,90,150,240,340]){const e=document.elementFromPoint(innerWidth/2,y);el=e&&e.closest&&e.closest('#rd p[data-o]');if(el)break}
